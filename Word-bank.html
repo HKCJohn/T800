@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>背词器 · 480词12题库</title>
+    <title>背词器 · 480词+U1题库</title>
     <style>
         * {
             margin: 0;
@@ -12,7 +12,6 @@
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
-        /* ===== 主题变量（与之前一致） ===== */
         body.theme-default {
             --bg-start: #f0f7ff;
             --bg-end: #e9eef5;
@@ -224,10 +223,7 @@
             --close-btn-text: #2d4a2d;
         }
 
-        /* ===== 全局基础样式 ===== */
-        html {
-            font-size: 16px;
-        }
+        html { font-size: 16px; }
         body {
             font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
             background: linear-gradient(145deg, var(--bg-start), var(--bg-end));
@@ -250,7 +246,6 @@
             overflow: hidden;
             transition: border-radius 0.3s;
         }
-        /* ===== 首页样式 ===== */
         .start-card {
             padding: clamp(20px, 3vw, 40px) clamp(16px, 3vw, 28px) clamp(24px, 4vw, 40px);
             text-align: center;
@@ -304,14 +299,31 @@
             min-height: 34px;
         }
         .quiz-btn:active,
-        .theme-btn:active {
-            transform: scale(0.96);
-        }
+        .theme-btn:active { transform: scale(0.96); }
         .quiz-btn.active,
         .theme-btn.active {
             border-color: var(--gold);
             background: var(--gold);
             color: #1e2b3c;
+        }
+        /* U1按钮高亮样式（区别于数字题库） */
+        .quiz-btn-u1 {
+            border-color: #7c5cbf;
+            color: #7c5cbf;
+        }
+        .quiz-btn-u1.active {
+            background: #7c5cbf;
+            border-color: #7c5cbf;
+            color: #ffffff;
+        }
+        body.theme-charcoal .quiz-btn-u1 {
+            border-color: #b794f6;
+            color: #b794f6;
+        }
+        body.theme-charcoal .quiz-btn-u1.active {
+            background: #b794f6;
+            border-color: #b794f6;
+            color: #000000;
         }
         .quiz-btn-small {
             font-size: clamp(0.6rem, 0.9vw, 0.72rem);
@@ -335,9 +347,7 @@
             min-height: 52px;
         }
         .start-btn:active,
-        .notebook-btn:active {
-            transform: scale(0.97);
-        }
+        .notebook-btn:active { transform: scale(0.97); }
         .notebook-btn {
             background: var(--gold);
             color: #1e2b3c;
@@ -405,11 +415,8 @@
             transition: transform 0.15s;
             min-height: 52px;
         }
-        .wrongbook-btn:active {
-            transform: scale(0.97);
-        }
+        .wrongbook-btn:active { transform: scale(0.97); }
 
-        /* ===== 顶部状态栏 ===== */
         .stats-bar {
             background: var(--header);
             padding: clamp(12px, 1.5vw, 18px) clamp(16px, 2.5vw, 28px);
@@ -446,11 +453,8 @@
             transition: background 0.2s;
             min-height: 36px;
         }
-        .icon-btn:active {
-            background: rgba(255, 255, 240, 0.3);
-        }
+        .icon-btn:active { background: rgba(255, 255, 240, 0.3); }
 
-        /* ===== 单词显示区域 ===== */
         .word-area {
             padding: clamp(24px, 4vw, 45px) clamp(16px, 2vw, 20px) clamp(16px, 2vw, 25px);
             text-align: center;
@@ -481,7 +485,6 @@
             color: var(--footer);
         }
 
-        /* ===== 选项区域 ===== */
         .options-area {
             padding: clamp(16px, 2.5vw, 30px) clamp(16px, 2.5vw, 28px) clamp(16px, 2.5vw, 25px);
             background: var(--card);
@@ -549,12 +552,8 @@
             min-height: 50px;
         }
         .next-btn:active:not(:disabled),
-        .prev-btn:active:not(:disabled) {
-            transform: scale(0.97);
-        }
-        .next-btn {
-            background: var(--next-bg);
-        }
+        .prev-btn:active:not(:disabled) { transform: scale(0.97); }
+        .next-btn { background: var(--next-bg); }
         .prev-btn {
             background: #6c757d;
             margin-bottom: 10px;
@@ -565,9 +564,7 @@
             cursor: not-allowed;
         }
         .next-btn:disabled:active,
-        .prev-btn:disabled:active {
-            transform: none;
-        }
+        .prev-btn:disabled:active { transform: none; }
         .finish-message {
             background: var(--correct);
             text-align: center;
@@ -585,7 +582,6 @@
             border-top: 1px solid var(--border);
         }
 
-        /* ===== 单词本 & 错题本 ===== */
         .notebook-header {
             display: flex;
             justify-content: space-between;
@@ -610,9 +606,7 @@
             transition: background 0.2s;
             min-height: 34px;
         }
-        .notebook-header .icon-btn:active {
-            background: var(--close-btn-hover);
-        }
+        .notebook-header .icon-btn:active { background: var(--close-btn-hover); }
         .notebook-list {
             max-height: 65vh;
             max-height: 65dvh;
@@ -631,9 +625,7 @@
             gap: 8px;
             min-height: 44px;
         }
-        .notebook-item:active {
-            background: var(--opt-hover);
-        }
+        .notebook-item:active { background: var(--opt-hover); }
         .notebook-left {
             display: flex;
             gap: clamp(8px, 1.2vw, 16px);
@@ -662,7 +654,6 @@
             flex-shrink: 0;
         }
 
-        /* ===== 输入模式 ===== */
         .input-group {
             display: flex;
             gap: clamp(8px, 1vw, 14px);
@@ -683,9 +674,7 @@
             appearance: none;
             min-height: 48px;
         }
-        .input-field:focus {
-            border-color: var(--gold);
-        }
+        .input-field:focus { border-color: var(--gold); }
         .submit-btn {
             background: var(--next-bg);
             border: none;
@@ -700,15 +689,12 @@
             min-height: 48px;
             white-space: nowrap;
         }
-        .submit-btn:active:not(:disabled) {
-            transform: scale(0.97);
-        }
+        .submit-btn:active:not(:disabled) { transform: scale(0.97); }
         .submit-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
 
-        /* ===== 配对模式 ===== */
         .match-container {
             padding: clamp(14px, 2vw, 22px) clamp(14px, 2.5vw, 28px);
         }
@@ -763,39 +749,22 @@
             opacity: 0.85;
             cursor: default;
         }
-        .match-card.paired:active {
-            transform: none;
-        }
+        .match-card.paired:active { transform: none; }
         .match-card.wrong-flash {
             animation: shake 0.45s;
             border-color: var(--wrong-border);
             background: var(--wrong);
         }
         @keyframes shake {
-            0%,
-            100% {
-                transform: translateX(0);
-            }
-            20% {
-                transform: translateX(-6px);
-            }
-            40% {
-                transform: translateX(6px);
-            }
-            60% {
-                transform: translateX(-4px);
-            }
-            80% {
-                transform: translateX(4px);
-            }
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
         }
 
-        /* ===== 隐藏/显示工具 ===== */
-        .hide {
-            display: none !important;
-        }
+        .hide { display: none !important; }
 
-        /* ===== 主题切换小圆点 ===== */
         .theme-switch-inline {
             display: flex;
             gap: clamp(4px, 0.6vw, 8px);
@@ -814,32 +783,15 @@
             touch-action: manipulation;
             flex-shrink: 0;
         }
-        .tiny-theme:active {
-            transform: scale(0.9);
-        }
-        .tiny-theme:hover {
-            transform: scale(1.08);
-        }
-        .tiny-theme.color-default {
-            background: #2c4c6e;
-        }
-        .tiny-theme.color-dark {
-            background: #0f172a;
-        }
-        .tiny-theme.color-warm {
-            background: #c27e4a;
-        }
-        .tiny-theme.color-charcoal {
-            background: #111111;
-        }
-        .tiny-theme.color-whitepink {
-            background: #f08fa5;
-        }
-        .tiny-theme.color-whitegreen {
-            background: #7baa7b;
-        }
+        .tiny-theme:active { transform: scale(0.9); }
+        .tiny-theme:hover { transform: scale(1.08); }
+        .tiny-theme.color-default { background: #2c4c6e; }
+        .tiny-theme.color-dark { background: #0f172a; }
+        .tiny-theme.color-warm { background: #c27e4a; }
+        .tiny-theme.color-charcoal { background: #111111; }
+        .tiny-theme.color-whitepink { background: #f08fa5; }
+        .tiny-theme.color-whitegreen { background: #7baa7b; }
 
-        /* ===== 题库网格 ===== */
         .range-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -850,8 +802,10 @@
             padding: clamp(4px, 0.5vw, 8px) 2px;
             min-height: 28px;
         }
+        .range-grid .quiz-btn-u1 {
+            font-size: clamp(0.65rem, 0.9vw, 0.78rem);
+        }
 
-        /* ===== 错词总结 ===== */
         .mistake-summary {
             margin-top: clamp(10px, 1.5vw, 16px);
             text-align: left;
@@ -870,10 +824,7 @@
             gap: 8px;
         }
 
-        /* ===== 滚动条美化 ===== */
-        .notebook-list::-webkit-scrollbar {
-            width: 4px;
-        }
+        .notebook-list::-webkit-scrollbar { width: 4px; }
         .notebook-list::-webkit-scrollbar-track {
             background: var(--opt-bg);
             border-radius: 4px;
@@ -883,11 +834,8 @@
             border-radius: 4px;
         }
 
-        /* ===== 响应式：小屏手机 ===== */
         @media (max-width: 480px) {
-            .range-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
+            .range-grid { grid-template-columns: repeat(4, 1fr); }
             .stats-bar {
                 flex-direction: row;
                 flex-wrap: wrap;
@@ -897,9 +845,7 @@
                 font-size: 0.7rem;
                 padding: 4px 10px;
             }
-            .theme-switch-inline {
-                gap: 4px;
-            }
+            .theme-switch-inline { gap: 4px; }
             .tiny-theme {
                 width: 22px;
                 height: 22px;
@@ -913,27 +859,19 @@
                 padding: 8px 12px;
                 min-height: 38px;
             }
-            .notebook-left {
-                gap: 6px;
-            }
+            .notebook-left { gap: 6px; }
             .notebook-num {
                 min-width: 24px;
                 font-size: 0.65rem;
             }
-            .notebook-en {
-                font-size: 0.75rem;
-            }
-            .notebook-zh {
-                font-size: 0.7rem;
-            }
+            .notebook-en { font-size: 0.75rem; }
+            .notebook-zh { font-size: 0.7rem; }
             .option-btn {
                 font-size: 0.8rem;
                 padding: 10px 10px;
                 min-height: 40px;
             }
-            .english-word {
-                font-size: 1.8rem;
-            }
+            .english-word { font-size: 1.8rem; }
             .feedback-area {
                 font-size: 0.8rem;
                 padding: 10px 12px;
@@ -962,9 +900,7 @@
                 min-height: 44px;
                 padding: 12px;
             }
-            .logo {
-                font-size: 1.8rem;
-            }
+            .logo { font-size: 1.8rem; }
             .quiz-btn,
             .theme-btn {
                 font-size: 0.6rem;
@@ -975,32 +911,18 @@
                 font-size: 0.5rem;
                 min-height: 24px;
             }
-            body {
-                padding: 8px;
-            }
-            .screen {
-                border-radius: 24px;
-            }
+            body { padding: 8px; }
+            .screen { border-radius: 24px; }
         }
 
-        /* ===== 响应式：平板和大屏手机 ===== */
         @media (min-width: 481px) and (max-width: 768px) {
-            .range-grid {
-                grid-template-columns: repeat(6, 1fr);
-            }
-            .english-word {
-                font-size: 2.8rem;
-            }
-            .match-columns {
-                gap: 16px;
-            }
+            .range-grid { grid-template-columns: repeat(6, 1fr); }
+            .english-word { font-size: 2.8rem; }
+            .match-columns { gap: 16px; }
         }
 
-        /* ===== 响应式：宽屏桌面 ===== */
         @media (min-width: 1200px) {
-            .screen {
-                max-width: 820px;
-            }
+            .screen { max-width: 820px; }
             .option-btn:hover:not(:disabled) {
                 background: var(--opt-hover);
                 transform: scale(1.01);
@@ -1009,12 +931,9 @@
                 background: var(--match-hover);
                 transform: scale(1.02);
             }
-            .tiny-theme:hover {
-                transform: scale(1.12);
-            }
+            .tiny-theme:hover { transform: scale(1.12); }
         }
 
-        /* ===== 暗色模式下的滚动条 ===== */
         .theme-dark .notebook-list::-webkit-scrollbar-track,
         .theme-charcoal .notebook-list::-webkit-scrollbar-track {
             background: var(--opt-bg);
@@ -1029,10 +948,11 @@
     <!-- ===== 首页 ===== -->
     <div id="startScreen" class="screen start-card">
         <div class="logo">📚 背词器</div>
-        <div class="sub">480词 · 12题库 · 可选发音人 · 自动朗读</div>
+        <div class="sub">480词 + U1题库 · 可选发音人 · 自动朗读</div>
         <div class="option-group">
             <div class="group-title">📖 选择题库范围</div>
             <div class="range-grid" id="quizRangeSelector">
+                <div data-range="U1" class="quiz-btn quiz-btn-small quiz-btn-u1">U1</div>
                 <div data-range="1" class="quiz-btn quiz-btn-small active">1-40</div>
                 <div data-range="2" class="quiz-btn quiz-btn-small">41-80</div>
                 <div data-range="3" class="quiz-btn quiz-btn-small">81-120</div>
@@ -1077,6 +997,7 @@
         <div class="option-group">
             <div class="group-title">📖 单词本范围</div>
             <div class="range-grid" id="notebookRangeSelector">
+                <div data-range="U1" class="quiz-btn quiz-btn-small quiz-btn-u1">U1</div>
                 <div data-range="1" class="quiz-btn quiz-btn-small active">1-40</div>
                 <div data-range="2" class="quiz-btn quiz-btn-small">41-80</div>
                 <div data-range="3" class="quiz-btn quiz-btn-small">81-120</div>
@@ -1105,7 +1026,7 @@
         <button class="start-btn" id="startGameBtn">✨ 开始学习 ✨</button>
         <button class="notebook-btn" id="openNotebookBtn">📖 单词本</button>
         <button class="wrongbook-btn" id="openWrongBookBtn">📕 错题本</button>
-        <footer style="margin-top:clamp(12px,2vw,20px);">🎧 点击单词发声 · 6种主题 · 12题库 · 配对模式</footer>
+        <footer style="margin-top:clamp(12px,2vw,20px);">🎧 点击单词发声 · 6种主题 · U1+12题库 · 配对模式</footer>
     </div>
 
     <!-- ===== 游戏界面 ===== -->
@@ -1155,7 +1076,7 @@
                 <button class="next-btn" id="matchNextBtn" disabled>➡ 下一回合</button>
             </div>
         </div>
-        <footer>📚 480词 · 12题库 · 适配手机/电脑</footer>
+        <footer>📚 U1 + 12题库 · 适配手机/电脑</footer>
     </div>
 
     <!-- ===== 单词本 ===== -->
@@ -1177,10 +1098,10 @@
     </div>
 
     <script>
-        // ================================================================
-        // 480个单词完整数据（与之前完全一致）
-        // ================================================================
         (function() {
+            // ================================================================
+            // 480个单词完整数据 (1-480)
+            // ================================================================
             const ALL_WORDS = [
                 // ===== 题库1: 1-40 =====
                 { en: "graduation", pos: "n.", zh: "毕业" },
@@ -1677,30 +1598,105 @@
             ];
 
             // ================================================================
-            // 程序逻辑（与之前一致，完全保留功能）
+            // U1 题库（55个条目）
             // ================================================================
-            console.log('总单词数:', ALL_WORDS.length);
-            console.log('influence 出现次数:', ALL_WORDS.filter(w => w.en === 'influence').length);
+            const U1_WORDS = [
+                { en: "reach", pos: "v.", zh: "到达，达成" },
+                { en: "separate", pos: "v./adj.", zh: "分开，独立的" },
+                { en: "motivate", pos: "v.", zh: "激励，鼓舞" },
+                { en: "do-or-die", pos: "adj.", zh: "势在必行的，不顾一切的" },
+                { en: "eager", pos: "adj.", zh: "渴望的，热切的" },
+                { en: "unthinkable", pos: "adj.", zh: "不可想象的" },
+                { en: "attempt", pos: "n./v.", zh: "尝试，企图" },
+                { en: "vow", pos: "n./v.", zh: "誓言，发誓" },
+                { en: "routine", pos: "n.", zh: "常规，例行公事" },
+                { en: "gear", pos: "n.", zh: "装备" },
+                { en: "basically", pos: "adv.", zh: "基本上" },
+                { en: "incredibly", pos: "adv.", zh: "非常，令人难以置信的" },
+                { en: "feet (pl.)", pos: "n.", zh: "英尺（约0.3米）" },
+                { en: "raise", pos: "v.", zh: "抚养，培养" },
+                { en: "value", pos: "n./v.", zh: "价值，重视" },
+                { en: "super-independent", pos: "adj.", zh: "超级独立的" },
+                { en: "quit", pos: "v.", zh: "放弃，退出" },
+                { en: "bare", pos: "adj.", zh: "赤裸的，仅仅的" },
+                { en: "inspirational", pos: "adj.", zh: "(目的是)鼓舞人心的，激励的" },
+                { en: "hospitalize", pos: "v.", zh: "住院治疗" },
+                { en: "disorder", pos: "n.", zh: "疾病，失调" },
+                { en: "gymnast", pos: "n.", zh: "体操运动员" },
+                { en: "gymnastics", pos: "n.", zh: "体操运动" },
+                { en: "extreme", pos: "adj.", zh: "极端的，极度的" },
+                { en: "uncontrollable", pos: "adj.", zh: "不可控制的，难以控制的" },
+                { en: "concern", pos: "n./v.", zh: "关注，担忧" },
+                { en: "enormous", pos: "adj.", zh: "巨大的，庞大的" },
+                { en: "pressure", pos: "n.", zh: "压力，压迫" },
+                { en: "counselor", pos: "n.", zh: "顾问，辅导员" },
+                { en: "sophomore", pos: "n./adj.", zh: "大二学生，大二的" },
+                { en: "regional", pos: "adj.", zh: "地区的，区域性的" },
+                { en: "championship", pos: "n.", zh: "冠军赛，锦标赛" },
+                { en: "balanced", pos: "adj.", zh: "平衡的，均衡的" },
+                { en: "recall", pos: "v.", zh: "回忆，回想" },
+                { en: "currently", pos: "adv.", zh: "目前，现在" },
+                { en: "start with", pos: "phr. v.", zh: "以...开始" },
+                { en: "got married", pos: "v. phr.", zh: "结婚" },
+                { en: "make the most of", pos: "v. phr.", zh: "充分利用" },
+                { en: "speaking of", pos: "prep. phr.", zh: "谈到，说到" },
+                { en: "in control (of)", pos: "prep. phr.", zh: "控制，主宰" },
+                { en: "bring up", pos: "phr. v.", zh: "提到，谈到" },
+                { en: "be responsible for", pos: "v. phr.", zh: "对...负责，对...负有责任" },
+                { en: "adrenaline rush", pos: "n. phr.", zh: "肾上腺素冲动，极度兴奋" },
+                { en: "live on", pos: "v. phr.", zh: "靠...为生" },
+                { en: "compare (...) to", pos: "v. phr.", zh: "把...比作..." },
+                { en: "anorexia nervosa", pos: "n. phr.", zh: "厌食症" },
+                { en: "come first", pos: "v. phr.", zh: "居首位，最重要" },
+                { en: "go for", pos: "v. phr.", zh: "争取，追求" },
+                { en: "lead to", pos: "v. phr.", zh: "导致，通向" },
+                { en: "in a way", pos: "adv. phr.", zh: "在某种程度上，从某种角度上看" },
+                { en: "get hooked on", pos: "v. phr.", zh: "迷上，入迷" },
+                { en: "be obsessed with", pos: "v. phr.", zh: "痴迷于，迷惑" },
+                { en: "work out", pos: "v. phr.", zh: "锻炼，训练" },
+                { en: "in addition to", pos: "prep. phr.", zh: "除...之外，此外" },
+                { en: "to name a few", pos: "prep. phr.", zh: "举几个例子" }
+            ];
 
-            function getWordsByRange(rangeNum) {
-                const start = (rangeNum - 1) * 40;
+            // ================================================================
+            // 通用工具函数
+            // ================================================================
+            function getAllWords() {
+                return ALL_WORDS.concat(U1_WORDS);
+            }
+
+            // 支持传入字符串（'U1'）或数字（1-12）
+            function getWordsByRange(range) {
+                if (range === 'U1') return U1_WORDS;
+                const num = typeof range === 'string' ? parseInt(range) : range;
+                if (isNaN(num) || num < 1 || num > 12) return [];
+                const start = (num - 1) * 40;
                 const end = Math.min(start + 40, ALL_WORDS.length);
                 return ALL_WORDS.slice(start, end);
             }
 
-            function getRangeLabel(rangeNum) {
-                const start = (rangeNum - 1) * 40 + 1;
+            function getRangeLabel(range) {
+                if (range === 'U1') return 'U1题库';
+                const num = typeof range === 'string' ? parseInt(range) : range;
+                const start = (num - 1) * 40 + 1;
                 const end = Math.min(start + 39, 480);
-                return `题库${rangeNum} (${start}-${end})`;
+                return `题库${num} (${start}-${end})`;
             }
 
+            console.log('480词总条目:', ALL_WORDS.length);
+            console.log('U1词条数:', U1_WORDS.length);
+            console.log('influence 出现次数:', ALL_WORDS.filter(w => w.en === 'influence').length);
+
+            // ================================================================
+            // 全局状态
+            // ================================================================
             let currentSequence = [],
                 currentIndex = 0,
                 correctCount = 0,
                 answered = false,
                 currentOptions = [],
                 currentTheme = "default",
-                currentRange = 1,
+                currentRange = '1',           // 字符串，可为 'U1' 或 '1'~'12'
                 currentRangeLabel = "题库1 (1-40)",
                 autoSpeakEnabled = false,
                 quizMode = "choice";
@@ -1818,10 +1814,10 @@
             });
 
             // ----- 工具函数 -----
-            function getRandomDistractors(correctZh, rangeNum) {
+            function getRandomDistractors(correctZh, range) {
                 const used = new Set([correctZh]);
                 const pool = [];
-                const rangeWords = getWordsByRange(rangeNum);
+                const rangeWords = getWordsByRange(range);
                 for (const w of rangeWords) {
                     if (!used.has(w.zh)) { used.add(w.zh);
                         pool.push(w.zh); }
@@ -1832,8 +1828,8 @@
                 return pool.slice(0, 3);
             }
 
-            function generateOptions(correctZh, rangeNum) {
-                const distractors = getRandomDistractors(correctZh, rangeNum);
+            function generateOptions(correctZh, range) {
+                const distractors = getRandomDistractors(correctZh, range);
                 const options = [{ text: correctZh, isCorrect: true }, ...distractors.map(t => ({ text: t, isCorrect: false }))];
                 for (let i = options.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));
                     [options[i], options[j]] = [options[j], options[i]]; }
@@ -1934,7 +1930,7 @@
                     currentWordEl.textContent = "🎉 通关 🎉";
                     currentPosEl.textContent = '';
                     const summary = getMistakeSummary();
-                    let html = `<div class="finish-message">✨ 恭喜你完成了 ${currentRangeLabel} 题库！ ✨<br>点击「首页」可以选择其他范围继续挑战</div>`;
+                    let html = `<div class="finish-message">✨ 恭喜你完成了 ${currentRangeLabel} ！ ✨<br>点击「首页」可以选择其他范围继续挑战</div>`;
                     if (summary) html += summary;
                     else html += '<div style="margin-top:12px;color:var(--text);">🎯 全部答对，太厉害了！</div>';
                     optionsContainer.innerHTML = html;
@@ -2071,11 +2067,12 @@
             // ----- 开始游戏 -----
             function startGame() {
                 const rangeEl = document.querySelector('#quizRangeSelector .quiz-btn.active');
-                currentRange = parseInt(rangeEl ? rangeEl.dataset.range : '1');
+                // 注意：保留字符串形式（'U1' 或 '1'~'12'）
+                currentRange = rangeEl ? rangeEl.dataset.range : '1';
                 const order = document.querySelector('input[name="order"]:checked')?.value || 'original';
                 quizMode = document.querySelector('#quizModeSelector .quiz-btn.active')?.dataset.mode || 'choice';
                 let words = getWordsByRange(currentRange);
-                if (!words.length) words = getWordsByRange(1);
+                if (!words.length) words = getWordsByRange('1');
                 currentRangeLabel = getRangeLabel(currentRange);
                 if (order === 'random') words.sort(() => Math.random() - 0.5);
                 currentSequence = words;
@@ -2106,12 +2103,12 @@
                 startScreen.classList.remove('hide');
                 window.speechSynthesis?.cancel(); }
 
-            // ----- 单词本 & 错题本 -----
+            // ----- 单词本 -----
             function renderNotebook() {
                 if (!notebookList) return;
                 notebookList.innerHTML = '';
                 const rangeEl = document.querySelector('#notebookRangeSelector .quiz-btn.active');
-                const range = parseInt(rangeEl ? rangeEl.dataset.range : '1');
+                const range = rangeEl ? rangeEl.dataset.range : '1';
                 const words = getWordsByRange(range);
                 const label = getRangeLabel(range);
                 const header = document.createElement('div');
@@ -2128,6 +2125,7 @@
                 });
             }
 
+            // ----- 错题本 -----
             function renderWrongbook() {
                 if (!wrongbookList) return;
                 wrongbookList.innerHTML = '';
@@ -2140,8 +2138,8 @@
                 header.style.cssText = 'padding:8px 24px;font-weight:600;color:#c44f4f;border-bottom:2px solid var(--border);';
                 header.textContent = `📕 错题本 (共${sorted.length}个不同单词，按错误次数排序)`;
                 wrongbookList.appendChild(header);
+                const allWords = getAllWords();
                 sorted.forEach(([word, cnt]) => {
-                    const allWords = getWordsByRange(currentRange);
                     const ref = allWords.find(w => w.en === word);
                     const zh = ref ? ref.zh : '';
                     const pos = ref ? ref.pos : '';
