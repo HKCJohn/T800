@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>背词器 · 480词+U1题库</title>
+    <title>背词器 · 480词+U2题库</title>
     <style>
         * {
             margin: 0;
@@ -306,24 +306,33 @@
             background: var(--gold);
             color: #1e2b3c;
         }
-        /* U1按钮高亮样式（区别于数字题库） */
-        .quiz-btn-u1 {
-            border-color: #7c5cbf;
-            color: #7c5cbf;
+        /* U2 按钮专属高亮样式 */
+        .quiz-btn-u2 {
+            border-color: #2196a6;
+            color: #0d6e7a;
         }
-        .quiz-btn-u1.active {
-            background: #7c5cbf;
-            border-color: #7c5cbf;
+        .quiz-btn-u2.active {
+            background: #2196a6;
+            border-color: #2196a6;
             color: #ffffff;
         }
-        body.theme-charcoal .quiz-btn-u1 {
-            border-color: #b794f6;
-            color: #b794f6;
+        body.theme-charcoal .quiz-btn-u2 {
+            border-color: #4dd0e1;
+            color: #4dd0e1;
         }
-        body.theme-charcoal .quiz-btn-u1.active {
-            background: #b794f6;
-            border-color: #b794f6;
+        body.theme-charcoal .quiz-btn-u2.active {
+            background: #4dd0e1;
+            border-color: #4dd0e1;
             color: #000000;
+        }
+        body.theme-dark .quiz-btn-u2 {
+            border-color: #4dd0e1;
+            color: #4dd0e1;
+        }
+        body.theme-dark .quiz-btn-u2.active {
+            background: #4dd0e1;
+            border-color: #4dd0e1;
+            color: #0f172a;
         }
         .quiz-btn-small {
             font-size: clamp(0.6rem, 0.9vw, 0.72rem);
@@ -802,7 +811,7 @@
             padding: clamp(4px, 0.5vw, 8px) 2px;
             min-height: 28px;
         }
-        .range-grid .quiz-btn-u1 {
+        .range-grid .quiz-btn-u2 {
             font-size: clamp(0.65rem, 0.9vw, 0.78rem);
         }
 
@@ -948,11 +957,11 @@
     <!-- ===== 首页 ===== -->
     <div id="startScreen" class="screen start-card">
         <div class="logo">📚 背词器</div>
-        <div class="sub">480词 + U1题库 · 可选发音人 · 自动朗读</div>
+        <div class="sub">480词 + U2题库 · 可选发音人 · 自动朗读</div>
         <div class="option-group">
             <div class="group-title">📖 选择题库范围</div>
             <div class="range-grid" id="quizRangeSelector">
-                <div data-range="U1" class="quiz-btn quiz-btn-small quiz-btn-u1">U1</div>
+                <div data-range="U2" class="quiz-btn quiz-btn-small quiz-btn-u2">U2</div>
                 <div data-range="1" class="quiz-btn quiz-btn-small active">1-40</div>
                 <div data-range="2" class="quiz-btn quiz-btn-small">41-80</div>
                 <div data-range="3" class="quiz-btn quiz-btn-small">81-120</div>
@@ -997,7 +1006,7 @@
         <div class="option-group">
             <div class="group-title">📖 单词本范围</div>
             <div class="range-grid" id="notebookRangeSelector">
-                <div data-range="U1" class="quiz-btn quiz-btn-small quiz-btn-u1">U1</div>
+                <div data-range="U2" class="quiz-btn quiz-btn-small quiz-btn-u2">U2</div>
                 <div data-range="1" class="quiz-btn quiz-btn-small active">1-40</div>
                 <div data-range="2" class="quiz-btn quiz-btn-small">41-80</div>
                 <div data-range="3" class="quiz-btn quiz-btn-small">81-120</div>
@@ -1026,7 +1035,7 @@
         <button class="start-btn" id="startGameBtn">✨ 开始学习 ✨</button>
         <button class="notebook-btn" id="openNotebookBtn">📖 单词本</button>
         <button class="wrongbook-btn" id="openWrongBookBtn">📕 错题本</button>
-        <footer style="margin-top:clamp(12px,2vw,20px);">🎧 点击单词发声 · 6种主题 · U1+12题库 · 配对模式</footer>
+        <footer style="margin-top:clamp(12px,2vw,20px);">🎧 点击单词发声 · 6种主题 · U2+12题库 · 配对模式</footer>
     </div>
 
     <!-- ===== 游戏界面 ===== -->
@@ -1076,7 +1085,7 @@
                 <button class="next-btn" id="matchNextBtn" disabled>➡ 下一回合</button>
             </div>
         </div>
-        <footer>📚 U1 + 12题库 · 适配手机/电脑</footer>
+        <footer>📚 U2 + 12题库 · 适配手机/电脑</footer>
     </div>
 
     <!-- ===== 单词本 ===== -->
@@ -1598,76 +1607,83 @@
             ];
 
             // ================================================================
-            // U1 题库（55个条目）
+            // U2 题库（40单词 + 20短语 = 60条）
             // ================================================================
-            const U1_WORDS = [
-                { en: "reach", pos: "v.", zh: "到达，达成" },
-                { en: "separate", pos: "v./adj.", zh: "分开，独立的" },
-                { en: "motivate", pos: "v.", zh: "激励，鼓舞" },
-                { en: "do-or-die", pos: "adj.", zh: "势在必行的，不顾一切的" },
-                { en: "eager", pos: "adj.", zh: "渴望的，热切的" },
-                { en: "unthinkable", pos: "adj.", zh: "不可想象的" },
+            const U2_WORDS = [
+                // ---- 单词部分 (40) ----
+                { en: "fraud", pos: "n.", zh: "欺诈，骗局" },
+                { en: "constantly", pos: "adv.", zh: "不断地，经常地" },
+                { en: "contact", pos: "v./n.", zh: "联系，接触" },
+                { en: "convincing", pos: "adj.", zh: "令人信服的" },
+                { en: "obtain", pos: "v.", zh: "获得，得到" },
+                { en: "motive", pos: "n.", zh: "动机，目的" },
+                { en: "phishing", pos: "n.", zh: "网络钓鱼（骗取个人信息）" },
+                { en: "impersonate", pos: "v.", zh: "冒充，假扮" },
+                { en: "deception", pos: "n.", zh: "欺骗，欺诈" },
+                { en: "con", pos: "v./n.", zh: "诈骗，欺骗；骗局" },
+                { en: "account", pos: "n.", zh: "账户；解释" },
+                { en: "suspicious", pos: "adj.", zh: "怀疑的，可疑的" },
+                { en: "fake", pos: "adj./n./v.", zh: "假的；赝品；伪造" },
+                { en: "accurate", pos: "adj.", zh: "准确的，精确的" },
+                { en: "phony", pos: "adj.", zh: "假的，伪造的" },
+                { en: "operate", pos: "v.", zh: "操作，运转；动手术" },
+                { en: "luxury", pos: "n.", zh: "奢华，奢侈" },
+                { en: "community", pos: "n.", zh: "社区，群体" },
+                { en: "temporary", pos: "adj.", zh: "临时的，暂时的" },
+                { en: "perform", pos: "v.", zh: "表演，执行，履行" },
+                { en: "innocent", pos: "adj.", zh: "无辜的，无罪的" },
+                { en: "paycheck", pos: "n.", zh: "工资，薪水支票" },
+                { en: "attorney", pos: "n.", zh: "律师，代理人" },
+                { en: "transcript", pos: "n.", zh: "成绩单（复数 transcripts）" },
                 { en: "attempt", pos: "n./v.", zh: "尝试，企图" },
-                { en: "vow", pos: "n./v.", zh: "誓言，发誓" },
-                { en: "routine", pos: "n.", zh: "常规，例行公事" },
-                { en: "gear", pos: "n.", zh: "装备" },
-                { en: "basically", pos: "adv.", zh: "基本上" },
-                { en: "incredibly", pos: "adv.", zh: "非常，令人难以置信的" },
-                { en: "feet (pl.)", pos: "n.", zh: "英尺（约0.3米）" },
-                { en: "raise", pos: "v.", zh: "抚养，培养" },
-                { en: "value", pos: "n./v.", zh: "价值，重视" },
-                { en: "super-independent", pos: "adj.", zh: "超级独立的" },
-                { en: "quit", pos: "v.", zh: "放弃，退出" },
-                { en: "bare", pos: "adj.", zh: "赤裸的，仅仅的" },
-                { en: "inspirational", pos: "adj.", zh: "(目的是)鼓舞人心的，激励的" },
-                { en: "hospitalize", pos: "v.", zh: "住院治疗" },
-                { en: "disorder", pos: "n.", zh: "疾病，失调" },
-                { en: "gymnast", pos: "n.", zh: "体操运动员" },
-                { en: "gymnastics", pos: "n.", zh: "体操运动" },
-                { en: "extreme", pos: "adj.", zh: "极端的，极度的" },
-                { en: "uncontrollable", pos: "adj.", zh: "不可控制的，难以控制的" },
-                { en: "concern", pos: "n./v.", zh: "关注，担忧" },
-                { en: "enormous", pos: "adj.", zh: "巨大的，庞大的" },
-                { en: "pressure", pos: "n.", zh: "压力，压迫" },
-                { en: "counselor", pos: "n.", zh: "顾问，辅导员" },
-                { en: "sophomore", pos: "n./adj.", zh: "大二学生，大二的" },
-                { en: "regional", pos: "adj.", zh: "地区的，区域性的" },
-                { en: "championship", pos: "n.", zh: "冠军赛，锦标赛" },
-                { en: "balanced", pos: "adj.", zh: "平衡的，均衡的" },
-                { en: "recall", pos: "v.", zh: "回忆，回想" },
-                { en: "currently", pos: "adv.", zh: "目前，现在" },
-                { en: "start with", pos: "phr. v.", zh: "以...开始" },
-                { en: "got married", pos: "v. phr.", zh: "结婚" },
-                { en: "make the most of", pos: "v. phr.", zh: "充分利用" },
-                { en: "speaking of", pos: "prep. phr.", zh: "谈到，说到" },
-                { en: "in control (of)", pos: "prep. phr.", zh: "控制，主宰" },
-                { en: "bring up", pos: "phr. v.", zh: "提到，谈到" },
-                { en: "be responsible for", pos: "v. phr.", zh: "对...负责，对...负有责任" },
-                { en: "adrenaline rush", pos: "n. phr.", zh: "肾上腺素冲动，极度兴奋" },
-                { en: "live on", pos: "v. phr.", zh: "靠...为生" },
-                { en: "compare (...) to", pos: "v. phr.", zh: "把...比作..." },
-                { en: "anorexia nervosa", pos: "n. phr.", zh: "厌食症" },
-                { en: "come first", pos: "v. phr.", zh: "居首位，最重要" },
-                { en: "go for", pos: "v. phr.", zh: "争取，追求" },
-                { en: "lead to", pos: "v. phr.", zh: "导致，通向" },
-                { en: "in a way", pos: "adv. phr.", zh: "在某种程度上，从某种角度上看" },
-                { en: "get hooked on", pos: "v. phr.", zh: "迷上，入迷" },
-                { en: "be obsessed with", pos: "v. phr.", zh: "痴迷于，迷惑" },
-                { en: "work out", pos: "v. phr.", zh: "锻炼，训练" },
-                { en: "in addition to", pos: "prep. phr.", zh: "除...之外，此外" },
-                { en: "to name a few", pos: "prep. phr.", zh: "举几个例子" }
+                { en: "licensed", pos: "adj.", zh: "获得许可的，有执照的" },
+                { en: "genuine", pos: "adj.", zh: "真正的，真实的" },
+                { en: "recommendation", pos: "n.", zh: "推荐，建议" },
+                { en: "eventually", pos: "adv.", zh: "最终，终于" },
+                { en: "recognize", pos: "v.", zh: "认出，识别，承认" },
+                { en: "attendant", pos: "n.", zh: "服务员，乘务员" },
+                { en: "authority", pos: "n.", zh: "权威，当局（常用复数 authorities）" },
+                { en: "surroundings", pos: "n.", zh: "环境，周围的事物" },
+                { en: "federal", pos: "adj.", zh: "联邦的" },
+                { en: "release", pos: "n./v.", zh: "释放，发布" },
+                { en: "criminal", pos: "n./adj.", zh: "罪犯；犯罪的" },
+                { en: "entry-level", pos: "adj.", zh: "初级的，入门级的" },
+                { en: "specialist", pos: "n.", zh: "专家" },
+                { en: "victim", pos: "n.", zh: "受害者，牺牲品" },
+                { en: "document", pos: "n.", zh: "文件，文档" },
+                // ---- 短语部分 (20) ----
+                { en: "due to", pos: "介词短语", zh: "由于，因为" },
+                { en: "be known as", pos: "动词短语", zh: "作为……而闻名/被称为" },
+                { en: "respond to", pos: "动词短语", zh: "对……作出回应" },
+                { en: "give away", pos: "动词短语", zh: "赠送；泄露；出卖" },
+                { en: "in addition", pos: "副词短语", zh: "此外，另外" },
+                { en: "pretend to", pos: "动词短语", zh: "假装……" },
+                { en: "be involved in", pos: "动词短语", zh: "卷入，参与" },
+                { en: "for free", pos: "副词短语", zh: "免费地" },
+                { en: "in advance", pos: "副词短语", zh: "提前，预先" },
+                { en: "rely on", pos: "动词短语", zh: "依赖，依靠" },
+                { en: "be in charge of", pos: "动词短语", zh: "负责，掌管" },
+                { en: "no longer", pos: "副词短语", zh: "不再" },
+                { en: "graduate from", pos: "动词短语", zh: "从……毕业" },
+                { en: "escape from", pos: "动词短语", zh: "从……逃离" },
+                { en: "apply for", pos: "动词短语", zh: "申请" },
+                { en: "ahead of", pos: "介词短语", zh: "在……前面；领先于" },
+                { en: "search for", pos: "动词短语", zh: "寻找，搜寻" },
+                { en: "run one's own company", pos: "动词短语", zh: "经营自己的公司" },
+                { en: "specialize in (doing) sth.", pos: "动词短语", zh: "专门从事（做）某事" },
+                { en: "be satisfied with", pos: "动词短语", zh: "对……感到满意" }
             ];
 
             // ================================================================
             // 通用工具函数
             // ================================================================
             function getAllWords() {
-                return ALL_WORDS.concat(U1_WORDS);
+                return ALL_WORDS.concat(U2_WORDS);
             }
 
-            // 支持传入字符串（'U1'）或数字（1-12）
+            // 支持传入字符串（'U2'）或数字（1-12）
             function getWordsByRange(range) {
-                if (range === 'U1') return U1_WORDS;
+                if (range === 'U2') return U2_WORDS;
                 const num = typeof range === 'string' ? parseInt(range) : range;
                 if (isNaN(num) || num < 1 || num > 12) return [];
                 const start = (num - 1) * 40;
@@ -1676,7 +1692,7 @@
             }
 
             function getRangeLabel(range) {
-                if (range === 'U1') return 'U1题库';
+                if (range === 'U2') return 'U2题库';
                 const num = typeof range === 'string' ? parseInt(range) : range;
                 const start = (num - 1) * 40 + 1;
                 const end = Math.min(start + 39, 480);
@@ -1684,7 +1700,7 @@
             }
 
             console.log('480词总条目:', ALL_WORDS.length);
-            console.log('U1词条数:', U1_WORDS.length);
+            console.log('U2词条数:', U2_WORDS.length);
             console.log('influence 出现次数:', ALL_WORDS.filter(w => w.en === 'influence').length);
 
             // ================================================================
@@ -1696,7 +1712,7 @@
                 answered = false,
                 currentOptions = [],
                 currentTheme = "default",
-                currentRange = '1',           // 字符串，可为 'U1' 或 '1'~'12'
+                currentRange = '1',           // 字符串，可为 'U2' 或 '1'~'12'
                 currentRangeLabel = "题库1 (1-40)",
                 autoSpeakEnabled = false,
                 quizMode = "choice";
@@ -2067,7 +2083,6 @@
             // ----- 开始游戏 -----
             function startGame() {
                 const rangeEl = document.querySelector('#quizRangeSelector .quiz-btn.active');
-                // 注意：保留字符串形式（'U1' 或 '1'~'12'）
                 currentRange = rangeEl ? rangeEl.dataset.range : '1';
                 const order = document.querySelector('input[name="order"]:checked')?.value || 'original';
                 quizMode = document.querySelector('#quizModeSelector .quiz-btn.active')?.dataset.mode || 'choice';
