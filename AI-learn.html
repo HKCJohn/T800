@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 考前冲刺 - 终极题库</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #e0e0e0;
+            --text-muted: #9e9e9e;
+            --primary-color: #bb86fc;
+            --primary-hover: #9a67ea;
+            --correct-color: #03dac6;
+            --wrong-color: #cf6679;
+            --option-bg: #2d2d2d;
+            --option-hover: #3d3d3d;
+            --border-color: #333;
+            --textarea-bg: #1a1a1a;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+
+        .section-title {
+            color: #fff;
+            background: linear-gradient(90deg, var(--primary-color) 0%, transparent 100%);
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            border-left: 5px solid #fff;
+        }
+        .section-title.extra {
+            background: linear-gradient(90deg, #ff9800 0%, transparent 100%);
+        }
+
+        .header-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .question-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .question-card.correct { border-color: var(--correct-color); box-shadow: 0 0 10px rgba(3, 218, 198, 0.2); }
+        .question-card.wrong { border-color: var(--wrong-color); box-shadow: 0 0 10px rgba(207, 102, 121, 0.2); }
+
+        .question-type {
+            font-size: 0.8em;
+            padding: 3px 10px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: inline-block;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+        .type-single { background-color: #3f51b5; color: white; }
+        .type-multi { background-color: #ff9800; color: black; }
+        .type-short { background-color: #e91e63; color: white; }
+
+        .question-text {
+            font-size: 1.15em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #ffffff;
+            line-height: 1.5;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: var(--option-bg);
+            transition: all 0.2s;
+            color: var(--text-main);
+        }
+
+        .option:hover:not(.disabled) { background-color: var(--option-hover); border-color: var(--primary-color); }
+        .option.selected { background-color: rgba(187, 134, 252, 0.15); border-color: var(--primary-color); }
+        .option.disabled { cursor: not-allowed; opacity: 0.6; }
+        .option input { margin-right: 15px; cursor: pointer; width: 20px; height: 20px; accent-color: var(--primary-color); }
+        .option.correct-ans { border-color: var(--correct-color); background-color: rgba(3, 218, 198, 0.1); color: var(--correct-color); font-weight: bold; }
+        .option.wrong-ans { border-color: var(--wrong-color); background-color: rgba(207, 102, 121, 0.1); color: var(--wrong-color); text-decoration: line-through; }
+
+        textarea {
+            width: 100%;
+            box-sizing: border-box;
+            background-color: var(--textarea-bg);
+            color: var(--text-main);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: inherit;
+            font-size: 1em;
+            resize: vertical;
+            min-height: 120px;
+            transition: border-color 0.3s;
+        }
+        textarea:focus { outline: none; border-color: var(--primary-color); }
+
+        .btn-verify {
+            margin-top: 20px;
+            padding: 12px 24px;
+            background-color: var(--primary-color);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+            width: 100%;
+        }
+        .btn-verify:hover:not(:disabled) { background-color: var(--primary-hover); }
+        .btn-verify:active:not(:disabled) { transform: scale(0.98); }
+        .btn-verify:disabled { background-color: #444; color: #888; cursor: not-allowed; }
+
+        .explanation {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #262626;
+            border-left: 4px solid var(--primary-color);
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-size: 0.95em;
+            line-height: 1.7;
+        }
+        .explanation.show { display: block; animation: fadeIn 0.4s; }
+        .explanation.correct-bg { border-left-color: var(--correct-color); }
+        .explanation.wrong-bg { border-left-color: var(--wrong-color); }
+        
+        .explanation strong { color: #fff; }
+        .explanation .ans-text { font-size: 1.1em; font-weight: bold; margin-bottom: 8px; display: block; }
+        .explanation.correct-bg .ans-text { color: var(--correct-color); }
+        .explanation.wrong-bg .ans-text { color: var(--wrong-color); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+    <h1>🤖 AI 考前冲刺终极题库</h1>
+    
+    <div class="header-stats">
+        <span>📚 课内题: <span id="in-class-count" style="color: var(--primary-color);">0</span></span>
+        <span>🚀 课外题: <span id="extra-count" style="color: #ff9800;">0</span></span>
+        <span>✅ 已作答: <span id="answered-count" style="color: var(--correct-color);">0</span></span>
+    </div>
+
+    <!-- 课内区域 -->
+    <div class="section-title">📚 【课内巩固区】原卷 & 核心概念</div>
+    <div id="in-class-container"></div>
+
+    <!-- 课外区域 -->
+    <div class="section-title extra">🚀 【课外拓展区】深度理解 (单选/多选/简答)</div>
+    <div id="extra-container"></div>
+
+    <script>
+        const questions = [
+            // ==========================================
+            // 课内巩固区 (原卷 + 题库，无计算题)
+            // ==========================================
+            // --- 单选题 ---
+            { category: "in-class", type: "single", question: "相較於整批梯度下降，SGD 每次更新使用一筆隨機資料。哪項是其典型特性？", options: ["單次更新計算較快", "每次更新必定更接近全域最小值", "比 mini-batch 更穩定", "不需反向傳播"], answer: [0], explanation: "SGD 每次只用一筆資料計算梯度，計算極快，但容易震盪。" },
+            { category: "in-class", type: "single", question: "訓練時損失值在最低點附近持續大幅上下跳動，最合理的第一個調整是？", options: ["提高學習率", "移除損失函數", "降低學習率", "將權重設成 0"], answer: [2], explanation: "損失值大幅跳動代表學習率過大，導致震盪，應降低學習率。" },
+            { category: "in-class", type: "single", question: "單一感知器只能形成線性決策邊界。下列哪項最能解釋它無法單獨正確分類 XOR？", options: ["XOR 只能用 Softmax 分類", "XOR 需要至少三個輸入", "感知器不能使用權重", "XOR 的正負樣本不能由一條直線分開"], answer: [3], explanation: "XOR 是典型的線性不可分問題，無法用一條直線分開。" },
+            { category: "in-class", type: "single", question: "tanh 相較於 sigmoid，一項常見特性為何？", options: ["負輸入一律輸出 0", "專門用於多分類機率正規化", "輸出範圍以 0 為中心，介於 -1 和 1", "輸出只能是 0 或 1"], answer: [2], explanation: "Tanh 輸出 (-1, 1) 以 0 為中心，有助於加速收斂。" },
+            { category: "in-class", type: "single", question: "多分類問題中，Softmax 輸出最常被如何解讀？", options: ["總和為 1 的類別機率分布", "各類別彼此獨立且總和可大於 1 的分數", "權重的正則化係數", "訓練資料的平均值"], answer: [0], explanation: "Softmax 將輸出壓縮至 (0,1)，總和為 1，代表各類別機率。" },
+            { category: "in-class", type: "single", question: "在一個多層感知器 (MLP) 中，如果我們將所有神經元的激活函數從 ReLU 換成線性函數（f(x)= x），那麼整個網路：", options: ["反向傳播將無法計算梯度", "等效於一個單一的線性回歸模型", "會變成一個邏輯回歸模型", "將無法擬合非線性關係"], answer: [1], explanation: "多個線性變換疊加仍為線性變換，網路失去非線性擬合能力。" },
+            { category: "in-class", type: "single", question: "使用 Adam 的描述何者最正確？", options: ["根據歷史梯度調整不同參數的有效學習率", "隨機屏蔽部分神經元", "將每批資料標準化到平均數為 0", "只使用固定學習率，不保留梯度資訊"], answer: [0], explanation: "Adam 結合動量與自適應學習率，能動態調整各參數的學習率。" },
+            { category: "in-class", type: "single", question: "在一個深度網路中，你決定將所有隱藏層的激活函數從 Tanh 換成 ReLU。理論上，這項改變最可能直接帶來下列哪一種效果？", options: ["解決梯度爆炸問題", "大幅增加模型的計算時間", "緩解在正數區域的梯度消失問題", "確保輸出值被壓縮在一個有限的範圍內"], answer: [2], explanation: "ReLU 在正數區域導數為 1，能緩解梯度消失。" },
+            { category: "in-class", type: "single", question: "Sigmoid 函數在輸入值絕對值很大時，最可能帶來哪個訓練困難？", options: ["權重變成 0", "導數接近 0 (梯度消失)", "損失函數不再需要", "輸出超過 1"], answer: [1], explanation: "兩端導數極小，梯度連乘導致梯度消失。" },
+            { category: "in-class", type: "single", question: "損失函數在監督式訓練中的主要作用是什麼？", options: ["衡量模型預測與目標之間的差距", "決定訓練資料如何分班", "將所有權重初始化為零", "保證模型沒有過擬合"], answer: [0], explanation: "損失函數用來量化預測與真實標籤之間的誤差。" },
+            
+            // --- 多选题 ---
+            { category: "in-class", type: "multi", question: "關於防止過擬合的方法，選出所有正確敘述。", options: ["L2 正則化會在目標中加入權重懲罰，促使權重不過度增大", "批量歸一化會標準化每層輸入，以穩定訓練時的輸入分佈", "Early stopping 可在驗證誤差開始上升時停止訓練", "Dropout 訓練時隨機將部分神經元輸出設為 0"], answer: [0, 1, 2, 3], explanation: "四個選項皆為常見的防過擬合手段。" },
+            { category: "in-class", type: "multi", question: "關於梯度下降的三種批量方式，選出所有正確敘述。", options: ["batch size 越大，訓練越快且泛化越好", "SGD 每次使用一筆資料估計梯度", "Mini-batch GD 對小批資料的梯度作平均後更新", "Batch GD 每次使用整個訓練集估計梯度"], answer: [1, 2, 3], explanation: "A錯，Batch size 過大不一定泛化好。B、C、D為正確描述。" },
+            { category: "in-class", type: "multi", question: "關於自編碼器與遷移學習，選出所有正確敘述。", options: ["自編碼器必須使用人工標註的類別標籤", "自編碼器以輸出盡量重建輸入作為訓練目標", "微調時可凍結部分預訓練層，只更新其餘參數", "自編碼器可用於特徵學習或預訓練"], answer: [1, 2, 3], explanation: "A錯，自編碼器是非監督式學習，不需標籤。" },
+
+            // --- 课内简答题 ---
+            { category: "in-class", type: "short", question: "說明自編碼器的輸入、輸出及訓練目標，並列出它的一種用途。", answer: "輸入：原始資料（如影像）。\n輸出：重建後的資料。\n訓練目標：讓輸出盡可能接近輸入（重建誤差最小化），不需要類別標籤。\n用途：特徵學習、資料降維、預訓練。", explanation: "自編碼器透過編碼器壓縮，再由解碼器重建輸入。" },
+            { category: "in-class", type: "short", question: "比較 MAE、MSE 與交叉熵各自衡量的誤差特性，並指出 MSE 對大誤差的反應有何不同。", answer: "MAE（平均絕對誤差）：對誤差取絕對值後平均，對大誤差較寬容。\nMSE（均方誤差）：對誤差平方後平均，因為平方操作，對大誤差的懲罰呈平方級放大。\n交叉熵：衡量預測機率分布與真實標籤分布之間的差異，常用於分類任務。", explanation: "重點在於 MSE 的平方項會極大化大誤差的影響。" },
+            { category: "in-class", type: "short", question: "請說明「深度學習」與傳統機器學習的主要差異。", answer: "1. 特徵提取：傳統機器學習依靠人工設計特徵；深度學習透過多層神經網路自動學習資料的層次化特徵。\n2. 資料需求：深度學習通常需要大量資料與運算資源，但能捕捉更複雜的模式。\n3. 模型深度：傳統多為淺層模型，深度學習具備深層架構。", explanation: "核心差異在於「自動特徵提取」與「多層架構」。" },
+            { category: "in-class", type: "short", question: "用自己的話說明反向傳播如何協助訓練神經網路。答案須包含「誤差／損失」、「梯度」及「更新權重」之間的關係。", answer: "前向傳播：資料輸入網路得到預測結果，並計算預測與真實目標的誤差（Loss）。\n反向傳播：利用鏈式法則，從輸出層往回計算損失函數對每一個權重的偏導數（梯度）。\n更新權重：優化器根據這些梯度，沿著梯度的反方向，按照學習率去更新網路中的權重，使得損失下降。", explanation: "流程：算損失 -> 求梯度 -> 更新參數。" },
+
+            // ==========================================
+            // 课外拓展区 (新增单选、多选 + 原有简答题)
+            // ==========================================
+            // --- 课外单选 (5题) ---
+            {
+                category: "extra", type: "single",
+                question: "【课外单选】在深度學習模型訓練中，我們通常會使用 GPU 而非 CPU，主要原因為何？",
+                options: ["GPU 擁有更高的時脈頻率，單執行緒運算能力更強", "GPU 擅長處理大量平行的矩陣與張量運算", "CPU 無法處理浮點數運算", "GPU 的記憶體容量通常大於 CPU"],
+                answer: [1],
+                explanation: "深度學習涉及大量的矩陣乘法。GPU 擁有數千個小核心，非常適合平行計算；而 CPU 核心少，更擅長邏輯控制與單一複雜任務。"
+            },
+            {
+                category: "extra", type: "single",
+                question: "【课外单选】關於資料預處理，為避免「資料洩漏（Data Leakage）」，正確的標準化（Normalization）做法為何？",
+                options: ["使用包含訓練集、驗證集和測試集的全部資料來計算均值和標準差", "先切分資料集，僅使用「訓練集」計算均值和標準差，再套用到驗證集與測試集", "使用驗證集的均值和標準差來標準化訓練集", "不需要標準化，直接將資料輸入模型"],
+                answer: [1],
+                explanation: "資料洩漏是指測試集或驗證集的資訊洩漏到訓練過程中。標準化時只能基於訓練集的統計量，否則模型在訓練時就「偷看」了未來的資料。"
+            },
+            {
+                category: "extra", type: "single",
+                question: "【课外单选】卷積神經網路（CNN）中的卷積層（Convolutional Layer）與全連接層（Fully Connected Layer）相比，最大的優勢是什麼？",
+                options: ["卷積層可以處理非結構化資料，全連接層只能處理圖片", "卷積層透過局部連接與權重共享，大幅減少了模型參數並保有平移不變性", "卷積層不需要進行反向傳播", "卷積層只能用於黑白圖片，全連接層可用於彩色圖片"],
+                answer: [1],
+                explanation: "全連接層每個神經元與前一層全部相連，參數量大；卷積層使用濾波器滑動（權重共享）學習局部特徵，參數少且具備平移不變性。"
+            },
+            {
+                category: "extra", type: "single",
+                question: "【课外单选】在遷移學習（Transfer Learning）的微調（Fine-tuning）階段，如果我們的目標資料集非常小，通常會採取什麼策略？",
+                options: ["重新初始化所有權重，從頭開始訓練整個網路", "凍結（Freeze）預訓練模型的所有卷積層，只重新訓練最後的分類層", "刪除模型的所有隱藏層", "大幅提高學習率以加速收斂"],
+                answer: [1],
+                explanation: "當目標資料量很少時，如果微調所有參數容易導致嚴重的過擬合。凍結預訓練的特徵提取層（卷積層），只訓練新的分類器是常見且有效的做法。"
+            },
+            {
+                category: "extra", type: "single",
+                question: "【课外单选】關於激活函數 ReLU (Rectified Linear Unit)，以下敘述何者正確？",
+                options: ["輸出範圍為 (-1, 1)", "當輸入小於 0 時，梯度為 1", "當輸入大於 0 時，梯度固定為 1，可緩解梯度消失問題", "它是一種非線性函數，且計算複雜度比 Sigmoid 高很多"],
+                answer: [2],
+                explanation: "ReLU 公式為 max(0, x)。在正數區域導數為 1，不會有梯度消失問題，且計算非常簡單（只需判斷是否大於 0）。輸入小於 0 時輸出及梯度皆為 0。"
+            },
+
+            // --- 课外多选 (3题) ---
+            {
+                category: "extra", type: "multi",
+                question: "【课外多选】下列哪些方法屬於「資料增強（Data Augmentation）」的常見技術？",
+                options: ["對圖片進行隨機水平翻轉（Random Horizontal Flip）", "對圖片進行隨機裁剪（Random Crop）", "調整圖片的亮度、對比度或飽和度", "將圖片的像素值全部除以 255 進行歸一化"],
+                answer: [0, 1, 2],
+                explanation: "資料增強是透過幾何變換（翻轉、裁剪）或色彩變換（亮度、對比度）來生成新資料以擴充訓練集。選項 D 屬於資料預處理（轉為 Tensor 並縮放到 [0,1]），不屬於資料增強。"
+            },
+            {
+                category: "extra", type: "multi",
+                question: "【课外多选】關於 L1 正則化與 L2 正則化，下列敘述何者正確？",
+                options: ["兩者都是透過在損失函數中加入懲罰項來防止過擬合", "L1 正則化傾向於產生稀疏權重（部分權重變為 0），可用於特徵選擇", "L2 正則化傾向於讓權重盡量變小，但不一定會變成 0", "L1 正則化的數學表達式為對權重的平方和"],
+                answer: [0, 1, 2],
+                explanation: "L1 是權重的絕對值之和，容易產生稀疏解；L2 是權重的平方和，會使權重趨近於較小的數值。兩者皆為防過擬合的方法。"
+            },
+            {
+                category: "extra", type: "multi",
+                question: "【课外多选】在 PyTorch 中，關於張量（Tensor）的維度操作，下列敘述何者正確？",
+                options: ["使用 unsqueeze(0) 可以在第 0 維增加一個大小為 1 的維度（例如增加 Batch 維度）", "使用 squeeze() 可以移除所有大小為 1 的維度", "使用 view() 或 reshape() 可以改變張量的形狀，但通常需要保證前後元素總數不變", "在訓練模型時，輸入資料的 Batch 維度通常需要放在最後一維（例如 3x224x224x1）"],
+                answer: [0, 1, 2],
+                explanation: "PyTorch 的維度順序通常是 (Batch, Channel, Height, Width)，Batch 維度通常在第 0 維。選項 D 錯誤，Batch 維度應在最前面。"
+            },
+
+            // --- 课外简答题 (10题) ---
+            {
+                category: "extra", type: "short",
+                question: "【课外简答】什麼是資料洩漏（Data Leakage）？在機器學習的資料處理階段，應如何避免？",
+                answer: "資料洩漏是指在訓練模型時，意外地使用了測試集或驗證集的資訊。這會導致模型在訓練時表現極佳，但在真實測試時崩潰。避免方法包含：在進行任何資料前處理（如計算均值、標準差、特徵選擇）之前，必須先將資料切分為訓練集和測試集，且所有基於資料計算的統計量只能來自訓練集。",
+                explanation: "考點：資料劃分策略、資料洩漏的危害與避免。"
+            },
+            {
+                category: "extra", type: "short",
+                question: "【课外简答】請解釋為什麼在訓練神經網路時，需要將資料集分為訓練集（Train）、驗證集（Validation）和測試集（Test）？驗證集的作用是什麼？",
+                answer: "訓練集用於更新模型的權重；驗證集用於在訓練過程中評估模型的泛化能力，並進行超參數的調整（如學習率、網路層數等），避免直接在測試集上調參導致過擬合測試集；測試集則用於最終評估模型在未見過的真實資料上的表現。",
+                explanation: "考點：資料集的作用與超參數調整。"
+            },
+            {
+                category: "extra", type: "short",
+                question: "【课外简答】請解釋 Sigmoid 與 ReLU 激活函數各自的特點，以及為何在深層網路中 ReLU 通常優於 Sigmoid？",
+                answer: "Sigmoid 輸出範圍為 (0,1)，但其兩端導數極小，在深層網路反向傳播時容易發生「梯度消失」。ReLU 公式為 max(0,x)，在正數區域導數恆為 1，有效緩解了梯度消失問題，且計算簡單、收斂速度快，因此在深層網路中更常用。",
+                explanation: "考點：激活函數的特性比較、梯度消失問題。"
+            },
+            {
+                category: "extra", type: "short",
+                question: "【课外简答】什麼是 Dropout？請說明它在訓練階段與測試階段（model.eval()）的行為差異。",
+                answer: "Dropout 是一種正則化技術。在訓練階段，它以一定的機率（如 0.5）隨機將部分神經元的輸出暫時設為 0，這能迫使網路學習更魯棒的特徵，防止過擬合。在測試階段，Dropout 會關閉，所有神經元都參與計算（主流框架如 PyTorch 會自動進行數值縮放補償）。",
+                explanation: "考點：Dropout 機制、正則化。"
+            },
+            {
+                category: "extra", type: "short",
+                question: "【课外简答】請簡述 CNN 中「卷積層（Convolutional Layer）」與「池化層（Pooling Layer）」的主要功能。",
+                answer: "卷積層透過濾波器提取影像的局部特徵（如邊緣、紋理），並具備權重共享與平移不變性；池化層（如最大池化）主要負責下採樣（降維），保留主要特徵的同時減少計算量，並擴大感受野。",
+                explanation: "考點：卷積層與池化層的作用。"
+            },
+            {
+                category: "extra", type: "short",
+                question: "【课外简答】請解釋什麼是轉移學習（Transfer Learning），以及它為何在深度學習中非常實用？",
+                answer: "轉移學習是將在大型數據集（如 ImageNet）上預訓練好的模型，應用到新的目標任務上。因為底層卷積層提取的特徵（如邊緣、形狀）具有通用性，只需微調最後幾層，即可在目標數據集較小的情況下達到很好的效果，大幅節省訓練時間與算力。",
+                explanation: "考點：轉移學習的概念與優勢。"
+            },
+            {
+                category: "extra", type: "short",
+                question: "【课外简答】在模型評估中，為何在類別極度不平衡的資料集（例如 99% 是正常樣本，1% 是患病樣本）上，單看「準確率（Accuracy）」會失去意義？此時應該參考什麼指標？",
+                answer: "因為如果模型全部預測為「正常」，準確率也能高達 99%，但卻完全無法找出患病者。此時應使用混淆矩陣延伸的指標，如精確率（Precision）、召回率（Recall）與 F1-score，才能真實反映模型對少數類別的預測能力。",
+                explanation: "考點：類別不平衡與模型評價指標。"
+            },
+            {
+                category: "extra", type: "short",
+                question: "【课外简答】請說明權重初始化（Weight Initialization）的重要性。若將所有權重初始化為相同的常數（如全為 0），會發生什麼問題？",
+                answer: "好的權重初始化能幫助網路更快收斂，避免梯度消失或爆炸。若全初始化為 0，會導致「對稱性問題（Symmetry Problem）」：同層所有神經元計算結果相同，反向傳播得到的梯度也相同，更新後依然相同，網路將無法學習到不同的特徵。",
+                explanation: "考點：權重初始化、對稱性問題。"
+            },
+            {
+                category: "extra", type: "short",
+                question: "【课外简答】請解釋什麼是 Batch Normalization（批量歸一化），它主要解決了什麼問題？",
+                answer: "Batch Normalization 是在神經網路的每一層輸入上進行標準化（使均值接近 0，變異數接近 1）。它主要解決了「內部協變量偏移」問題，使得各層輸入分布更穩定，從而允許使用更大的學習率，加速模型收斂，並具有一定的正則化效果。",
+                explanation: "考點：Batch Normalization 的原理與作用。"
+            },
+            {
+                category: "extra", type: "short",
+                question: "【课外简答】在 PyTorch 訓練迴圈中，optimizer.zero_grad()、loss.backward() 與 optimizer.step() 分別扮演什麼角色？",
+                answer: "1. optimizer.zero_grad()：清空上一個批次累積的梯度（PyTorch 默認梯度會累加）。\n2. loss.backward()：執行反向傳播，計算當前損失對每個參數的梯度。\n3. optimizer.step()：根據計算出的梯度和優化器演算法（如 SGD, Adam），更新模型的參數權重。",
+                explanation: "考點：PyTorch 訓練迴圈的核心三步驟。"
+            }
+        ];
+
+        // --- 渲染逻辑 ---
+        let inClassCount = 0;
+        let extraCount = 0;
+        let answeredCount = 0;
+
+        const inClassContainer = document.getElementById('in-class-container');
+        const extraContainer = document.getElementById('extra-container');
+
+        questions.forEach((q, index) => {
+            const card = document.createElement('div');
+            card.className = 'question-card';
+            card.id = `card-${index}`;
+            
+            const typeBadge = document.createElement('div');
+            typeBadge.className = `question-type type-${q.type}`;
+            typeBadge.innerText = q.type === 'multi' ? '多选题' : (q.type === 'single' ? '单选题' : '简答题');
+            
+            const text = document.createElement('div');
+            text.className = 'question-text';
+            text.innerText = `${index + 1}. ${q.question}`;
+            
+            card.appendChild(typeBadge);
+            card.appendChild(text);
+
+            if (q.type === 'single' || q.type === 'multi') {
+                const optionsDiv = document.createElement('div');
+                optionsDiv.className = 'options';
+                
+                q.options.forEach((opt, optIndex) => {
+                    const label = document.createElement('label');
+                    label.className = 'option';
+                    label.id = `label-${index}-${optIndex}`;
+                    
+                    const input = document.createElement('input');
+                    input.type = q.type === 'multi' ? 'checkbox' : 'radio';
+                    input.name = `q${index}`;
+                    input.value = optIndex;
+                    
+                    input.onchange = () => {
+                        if (q.type === 'single') {
+                            q.options.forEach((_, i) => {
+                                document.getElementById(`label-${index}-${i}`).classList.remove('selected');
+                            });
+                        }
+                        if (input.checked) label.classList.add('selected');
+                        else label.classList.remove('selected');
+                    };
+                    
+                    label.appendChild(input);
+                    label.appendChild(document.createTextNode(` ${String.fromCharCode(65 + optIndex)}. ${opt}`));
+                    optionsDiv.appendChild(label);
+                });
+                card.appendChild(optionsDiv);
+            } else {
+                const textarea = document.createElement('textarea');
+                textarea.id = `input-${index}`;
+                textarea.placeholder = "在此输入你的解答，提交后可与参考答案核对...";
+                card.appendChild(textarea);
+            }
+
+            const btn = document.createElement('button');
+            btn.className = 'btn-verify';
+            btn.innerText = q.type === 'short' ? '提交并查看参考答案' : '确认作答';
+            btn.onclick = () => verifyAnswer(index, q, btn, card);
+
+            const expl = document.createElement('div');
+            expl.className = 'explanation';
+            expl.id = `explanation-${index}`;
+
+            card.appendChild(btn);
+            card.appendChild(expl);
+
+            if (q.category === 'in-class') {
+                inClassContainer.appendChild(card);
+                inClassCount++;
+            } else {
+                extraContainer.appendChild(card);
+                extraCount++;
+            }
+        });
+
+        document.getElementById('in-class-count').innerText = inClassCount;
+        document.getElementById('extra-count').innerText = extraCount;
+
+        // --- 批改逻辑 ---
+        function verifyAnswer(index, q, btn, card) {
+            const explDiv = document.getElementById(`explanation-${index}`);
+            
+            if (q.type === 'short') {
+                const textarea = document.getElementById(`input-${index}`);
+                if (textarea.value.trim() === '') {
+                    alert("请先输入你的解答！");
+                    return;
+                }
+                textarea.disabled = true;
+                btn.disabled = true;
+                btn.innerText = "已查看参考答案";
+                answeredCount++;
+                document.getElementById('answered-count').innerText = answeredCount;
+                
+                card.classList.add('correct'); 
+                explDiv.innerHTML = `<span class="ans-text">📝 参考答案与解析：</span><div style="color: #fff; margin-bottom: 10px; line-height: 1.8;">${q.answer.replace(/\n/g, '<br>')}</div><strong>考点提示：</strong> ${q.explanation}`;
+                explDiv.classList.add('show', 'correct-bg');
+                return;
+            }
+
+            // 选择题处理
+            const inputs = document.querySelectorAll(`input[name="q${index}"]`);
+            let selectedValues = [];
+            inputs.forEach(input => { if (input.checked) selectedValues.push(parseInt(input.value)); });
+
+            if (selectedValues.length === 0) {
+                alert("请先选择答案！");
+                return;
+            }
+
+            inputs.forEach(input => {
+                input.disabled = true;
+                input.parentElement.classList.add('disabled');
+            });
+            btn.disabled = true;
+            btn.innerText = "已批改";
+            answeredCount++;
+            document.getElementById('answered-count').innerText = answeredCount;
+
+            let isCorrect = false;
+            if (q.type === 'single') {
+                isCorrect = (selectedValues[0] === q.answer[0]);
+            } else {
+                const sortedSelected = selectedValues.sort();
+                const sortedAnswer = [...q.answer].sort();
+                isCorrect = sortedSelected.length === sortedAnswer.length && sortedSelected.every((val, i) => val === sortedAnswer[i]);
+            }
+
+            const answerLetters = q.answer.map(i => String.fromCharCode(65 + i)).join(', ');
+
+            if (isCorrect) {
+                card.classList.add('correct');
+                q.answer.forEach(i => document.getElementById(`label-${index}-${i}`).classList.add('correct-ans'));
+                explDiv.innerHTML = `<span class="ans-text">✅ 回答正确！</span><strong>解析：</strong> ${q.explanation}`;
+                explDiv.classList.add('show', 'correct-bg');
+            } else {
+                card.classList.add('wrong');
+                selectedValues.forEach(i => {
+                    if(!q.answer.includes(i)) document.getElementById(`label-${index}-${i}`).classList.add('wrong-ans');
+                });
+                q.answer.forEach(i => {
+                    if(!selectedValues.includes(i)) document.getElementById(`label-${index}-${i}`).classList.add('correct-ans');
+                });
+                explDiv.innerHTML = `<span class="ans-text">❌ 回答错误。正确答案：${answerLetters}</span><strong>解析：</strong> ${q.explanation}`;
+                explDiv.classList.add('show', 'wrong-bg');
+            }
+        }
+    </script>
+</body>
+</html>
