@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>代码填空 - 终极干扰版 (多空+随机+干扰项)</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #e0e0e0;
+            --text-muted: #9e9e9e;
+            --primary-color: #bb86fc;
+            --correct-color: #03dac6;
+            --wrong-color: #cf6679;
+            --code-bg: #0d1117;
+            --table-border: #333;
+            --hover-bg: rgba(187, 134, 252, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+        }
+
+        .question-block {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            border: 1px solid var(--table-border);
+        }
+
+        .question-title {
+            font-size: 1.2em;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        /* 代码块样式 */
+        pre {
+            background-color: var(--code-bg);
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.95em;
+            border: 1px solid #333;
+            margin-bottom: 20px;
+            color: #a9b7c6;
+            line-height: 1.6;
+        }
+        .keyword { color: #cc7832; }
+        .string { color: #6a8759; }
+        .number { color: #6897bb; }
+        .comment { color: #808080; font-style: italic; }
+        .blank { 
+            color: #ff9800; 
+            font-weight: bold; 
+            border-bottom: 2px solid #ff9800;
+            padding: 0 5px;
+            letter-spacing: 1px;
+        }
+
+        /* 配对表格样式 */
+        .table-container {
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .match-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #1a1a1a;
+        }
+
+        .match-table th, .match-table td {
+            border: 1px solid var(--table-border);
+            padding: 12px 8px;
+            text-align: center;
+            font-size: 0.9em;
+            min-width: 110px; /* 稍微减小最小宽度以容纳更多列 */
+        }
+
+        .match-table th {
+            background-color: #2d2d2d;
+            color: var(--text-main);
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-weight: normal;
+        }
+
+        .match-table td.row-header {
+            font-weight: bold;
+            color: var(--text-main);
+            background-color: #252525;
+            width: 40px;
+            font-family: monospace;
+            font-size: 1.1em;
+        }
+
+        .match-table tr:hover {
+            background-color: var(--hover-bg);
+        }
+
+        /* 自定义单选框 */
+        .match-table input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid #555;
+            outline: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            vertical-align: middle;
+        }
+
+        .match-table input[type="radio"]:checked {
+            border: 6px solid var(--primary-color);
+            background-color: #fff;
+        }
+
+        .match-table input[type="radio"]:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* 批改后的单元格背景色 */
+        .cell-correct {
+            background-color: rgba(3, 218, 198, 0.2) !important;
+        }
+        .cell-wrong {
+            background-color: rgba(207, 102, 121, 0.2) !important;
+        }
+
+        .btn-verify {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--primary-color);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .btn-verify:hover {
+            background-color: #9a67ea;
+        }
+        .btn-verify:disabled {
+            background-color: #444;
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        .explanation {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #262626;
+            border-left: 4px solid var(--correct-color);
+            border-radius: 6px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+        .explanation.show { display: block; }
+        .explanation strong { color: #fff; }
+        .explanation .ans-text { font-size: 1.1em; font-weight: bold; margin-bottom: 8px; display: block; color: var(--correct-color); }
+    </style>
+</head>
+<body>
+
+    <h1>💻 代码填空 - 终极干扰版</h1>
+    <p style="text-align: center; color: #888;">加入了诱骗干扰项 + 刷新自动打乱选项！</p>
+
+    <div id="quiz-container">
+        <!-- JS 动态生成题目 -->
+    </div>
+
+    <script>
+        // 原始题库（加入干扰项，答案依然指向原始索引）
+        const rawQuizData = [
+            {
+                id: 1,
+                title: "第一题：数据变换与数据增强 (Transforms)",
+                code: `train_transform = transforms.Compose([
+    <span class="comment"># 數據增强</span>
+    transforms.<span class="blank">(a)</span>(size=(28, 28)),
+    transforms.<span class="blank">(b)</span>(degrees=(0, 90)),
+    transforms.RandomHorizontalFlip(<span class="blank">(c)</span>),
+    <span class="comment"># 數據前處理</span>
+    transforms.<span class="blank">(d)</span>((28, 28)),
+    transforms.<span class="blank">(e)</span>(),
+    transforms.Normalize((0.5,), (0.5,))
+])`,
+                // 加入了 CenterCrop, p=0.5 等干扰项
+                options: ['RandomResizedCrop', 'RandomRotation', 'p=0.3', 'Resize', 'ToTensor', 'CenterCrop', 'p=0.5', 'Normalize'],
+                answers: { a: 0, b: 1, c: 2, d: 3, e: 4 },
+                explanation: "(a) 随机裁剪缩放 RandomResizedCrop；(b) 随机旋转 RandomRotation；(c) 随机水平翻转的概率 p=0.3；(d) 统一调整图像尺寸 Resize；(e) 将图像转为张量 ToTensor。Normalize在下面一行已经写了，不能选。"
+            },
+            {
+                id: 2,
+                title: "第二题：数据集加载与 DataLoader 设置",
+                code: `mnist_train = torchvision.datasets.<span class="blank">(a)</span>(
+    root="./data", <span class="blank">(b)</span>, download=True, transform=train_transform
+)
+
+train_loader = DataLoader(
+    mnist_train,
+    <span class="blank">(c)</span>,
+    shuffle=<span class="blank">(d)</span>,
+    num_workers=2
+)
+
+test_loader = DataLoader(
+    mnist_test,
+    batch_size=256,
+    shuffle=<span class="blank">(e)</span>
+)`,
+                // 加入 CIFAR10, train=False 等干扰项
+                options: ['MNIST', 'train=True', 'batch_size=64', 'True', 'False', 'CIFAR10', 'train=False', 'batch_size=256'],
+                answers: { a: 0, b: 1, c: 2, d: 3, e: 4 },
+                explanation: "(a) 加载 MNIST；(b) 训练集 train=True；(c) 训练集批次大小 64；(d) 训练集需打乱 shuffle=True；(e) 测试集不需要打乱 shuffle=False。注意不要选成验证集的配置。"
+            },
+            {
+                id: 3,
+                title: "第三题：数据集划分 (随机切分)",
+                code: `n_total = <span class="blank">(a)</span>(mnist_train)
+n_val = int(n_total * <span class="blank">(b)</span>)
+n_train = n_total - n_val
+
+train_sub, val_sub = <span class="blank">(c)</span>(
+    mnist_train, [<span class="blank">(d)</span>]
+)`,
+                // 加入 0.8, train_test_split 等干扰项
+                options: ['len', '0.2', 'random_split', 'n_train, n_val', '0.8', 'train_test_split', 'n_val, n_train', 'split'],
+                answers: { a: 0, b: 1, c: 2, d: 3 },
+                explanation: "(a) len() 获取长度；(b) 验证集占 20% (0.2)；(c) 使用 random_split 随机划分；(d) 参数顺序是 [训练集大小, 验证集大小]，不要选反了。"
+            },
+            {
+                id: 4,
+                title: "第四题：模型定义 (SimpleMLP)",
+                code: `class SimpleMLP(torch.nn.Module):
+    def __init__(self):
+        super(SimpleMLP, self).__init__()
+        self.flatten = torch.nn.<span class="blank">(a)</span>()
+        self.fc1 = torch.nn.<span class="blank">(b)</span>(28*28, hidden_dim)
+        self.relu = torch.nn.<span class="blank">(c)</span>()
+        self.fc2 = torch.nn.<span class="blank">(d)</span>(hidden_dim, 10)
+        
+    def <span class="blank">(e)</span>(self, x):
+        out = self.flatten(x)
+        out = self.fc1(out)
+        out = self.relu(out)
+        out = self.fc2(out)
+        return out`,
+                // 加入 Conv2d, Sigmoid, backward 等干扰项
+                options: ['Flatten', 'Linear', 'ReLU', 'forward', 'Conv2d', 'Sigmoid', 'backward', 'MaxPool2d'],
+                answers: { a: 0, b: 1, c: 2, d: 1, e: 3 },
+                explanation: "(a) 展平层 Flatten；(b) 线性层 Linear；(c) 激活函数 ReLU；(d) 输出层也是线性层 Linear (注意 b 和 d 选同一个)；(e) 前向传播函数必须叫 forward。"
+            },
+            {
+                id: 5,
+                title: "第五题：批次训练循环核心逻辑",
+                code: `def train_one_epoch(model, loader, optimizer, criterion, device):
+    model.<span class="blank">(a)</span>()
+    total_loss = 0
+    for imgs, labels in loader:
+        imgs, labels = imgs.<span class="blank">(b)</span>(device), labels.to(device)
+        
+        optimizer.<span class="blank">(c)</span>()
+        outputs = model(imgs)
+        loss = criterion(outputs, labels)
+        loss.<span class="blank">(d)</span>()
+        optimizer.<span class="blank">(e)</span>()
+        total_loss += loss.item() * imgs.size(0)
+    return total_loss / len(loader.dataset)`,
+                // 加入 eval, cpu, clear_grad 等干扰项
+                options: ['train', 'to', 'zero_grad', 'backward', 'step', 'eval', 'cpu', 'clear_grad'],
+                answers: { a: 0, b: 1, c: 2, d: 3, e: 4 },
+                explanation: "(a) 训练模式 model.train()；(b) 移动到设备 .to(device)；(c) 梯度清零 optimizer.zero_grad()；(d) 反向传播 loss.backward()；(e) 参数更新 optimizer.step()。"
+            },
+            {
+                id: 6,
+                title: "第六题：验证循环与准确率计算",
+                code: `def evaluate(model, loader, criterion, device):
+    model.<span class="blank">(a)</span>()
+    total_loss, correct = 0, 0
+    with torch.<span class="blank">(b)</span>():
+        for imgs, labels in loader:
+            outputs = model(imgs)
+            loss = criterion(outputs, labels)
+            total_loss += loss.item() * imgs.size(0)
+            correct += (outputs.<span class="blank">(c)</span>(1) == labels).sum().item()
+    return total_loss / len(loader.dataset), correct / <span class="blank">(d)</span>(loader.dataset)`,
+                // 加入 train, with_grad, max 等干扰项
+                options: ['eval', 'no_grad', 'argmax', 'len', 'train', 'with_grad', 'max', 'size'],
+                answers: { a: 0, b: 1, c: 2, d: 3 },
+                explanation: "(a) 验证模式 model.eval()；(b) 不计算梯度 torch.no_grad()；(c) 找最大值的索引 argmax(1)；(d) 计算准确率除以总长度 len()。"
+            }
+        ];
+
+        // 随机打乱数组函数 (Fisher-Yates 洗牌算法)
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        // 处理题目数据，打乱选项
+        const processedQuizData = rawQuizData.map(q => {
+            const originalOptions = [...q.options];
+            const indices = Array.from({length: originalOptions.length}, (_, i) => i);
+            const shuffledIndices = shuffleArray([...indices]);
+            const newOptions = shuffledIndices.map(i => originalOptions[i]);
+            
+            const newAnswers = {};
+            const originalAnswers = q.answers;
+            
+            for (const key in originalAnswers) {
+                const originalAnsIndex = originalAnswers[key];
+                const originalAnsString = originalOptions[originalAnsIndex];
+                const newAnsIndex = newOptions.indexOf(originalAnsString);
+                newAnswers[key] = newAnsIndex;
+            }
+
+            return {
+                ...q,
+                options: newOptions,
+                answers: newAnswers
+            };
+        });
+
+        const container = document.getElementById('quiz-container');
+
+        // 渲染题目
+        processedQuizData.forEach((q) => {
+            const block = document.createElement('div');
+            block.className = 'question-block';
+            block.id = `q${q.id}`;
+
+            const title = document.createElement('div');
+            title.className = 'question-title';
+            title.innerText = q.title;
+            block.appendChild(title);
+
+            const pre = document.createElement('pre');
+            pre.innerHTML = q.code;
+            block.appendChild(pre);
+
+            const tableContainer = document.createElement('div');
+            tableContainer.className = 'table-container';
+            const table = document.createElement('table');
+            table.className = 'match-table';
+            
+            // 表头 (渲染打乱后的选项)
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            headerRow.innerHTML = '<th></th>'; 
+            q.options.forEach(opt => {
+                const th = document.createElement('th');
+                th.innerText = opt;
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // 表体
+            const tbody = document.createElement('tbody');
+            const rowKeys = Object.keys(q.answers); 
+            
+            rowKeys.forEach(rowKey => {
+                const tr = document.createElement('tr');
+                
+                const th = document.createElement('td');
+                th.className = 'row-header';
+                th.innerText = rowKey;
+                tr.appendChild(th);
+
+                // 渲染单选框
+                q.options.forEach((opt, optIndex) => {
+                    const td = document.createElement('td');
+                    td.id = `td-${q.id}-${rowKey}-${optIndex}`;
+                    
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = `q${q.id}-${rowKey}`;
+                    radio.value = optIndex; 
+                    
+                    radio.onchange = () => {
+                        q.options.forEach((_, i) => {
+                            document.getElementById(`td-${q.id}-${rowKey}-${i}`).classList.remove('cell-correct', 'cell-wrong');
+                        });
+                    };
+
+                    td.appendChild(radio);
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+            tableContainer.appendChild(table);
+            block.appendChild(tableContainer);
+
+            const btn = document.createElement('button');
+            btn.className = 'btn-verify';
+            btn.innerText = '确认作答';
+            btn.onclick = () => checkAnswers(q.id);
+            block.appendChild(btn);
+
+            const expl = document.createElement('div');
+            expl.className = 'explanation';
+            expl.id = `exp-${q.id}`;
+            
+            const ansStr = Object.entries(q.answers).map(([k, v]) => `${k} -> ${q.options[v]}`).join(', ');
+            expl.innerHTML = `<span class="ans-text">✅ 正确答案：${ansStr}</span><strong>解析：</strong><br>${q.explanation}`;
+            block.appendChild(expl);
+
+            container.appendChild(block);
+        });
+
+        // 批改逻辑
+        function checkAnswers(qId) {
+            const q = processedQuizData.find(item => item.id === qId);
+            let allCorrect = true;
+            let hasEmpty = false;
+
+            Object.keys(q.answers).forEach(rowKey => {
+                const radios = document.getElementsByName(`q${qId}-${rowKey}`);
+                let selectedVal = null;
+                
+                radios.forEach(radio => {
+                    if (radio.checked) selectedVal = parseInt(radio.value);
+                });
+
+                const correctAns = q.answers[rowKey];
+
+                radios.forEach(radio => radio.disabled = true);
+
+                if (selectedVal === null) {
+                    hasEmpty = true;
+                } else if (selectedVal === correctAns) {
+                    document.getElementById(`td-${qId}-${rowKey}-${selectedVal}`).classList.add('cell-correct');
+                } else {
+                    document.getElementById(`td-${qId}-${rowKey}-${selectedVal}`).classList.add('cell-wrong');
+                    document.getElementById(`td-${qId}-${rowKey}-${correctAns}`).classList.add('cell-correct');
+                    allCorrect = false;
+                }
+            });
+
+            if (hasEmpty) {
+                alert("请确保每一行都选择了答案！");
+                return;
+            }
+
+            document.getElementById(`exp-${qId}`).classList.add('show');
+            
+            const btn = document.querySelector(`#q${qId} .btn-verify`);
+            btn.disabled = true;
+            btn.innerText = allCorrect ? "🎉 全部正确！" : "已批改，请查看解析";
+            btn.style.backgroundColor = allCorrect ? "var(--correct-color)" : "#555";
+        }
+    </script>
+</body>
+</html>
