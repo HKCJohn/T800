@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文學常識測驗｜老子・狄更斯・托爾斯泰</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+    background:linear-gradient(160deg,#eef2ff 0%,#f8fafc 45%,#ecfdf5 100%);
+    background-attachment:fixed;
+    color:#1e293b;min-height:100vh;padding:26px 16px 70px;line-height:1.75;
+    -webkit-text-size-adjust:100%;
+  }
+  .wrap{max-width:840px;margin:0 auto}
+  header{text-align:center;margin-bottom:22px}
+  h1{font-size:25px;letter-spacing:1px;color:#1e293b;font-weight:800}
+  .sub{color:#64748b;font-size:13.5px;margin-top:8px}
+
+  .sticky{
+    position:sticky;top:0;z-index:20;
+    background:rgba(255,255,255,.86);backdrop-filter:blur(12px);
+    border:1px solid #e8eef7;border-radius:14px;padding:12px 16px;margin-bottom:18px;
+    box-shadow:0 6px 20px rgba(15,23,42,.08);
+    display:flex;align-items:center;gap:14px;
+  }
+  .sticky .info{font-size:13.5px;color:#475569;white-space:nowrap}
+  .sticky .info b{color:#2563eb;font-size:16px;font-weight:800}
+  .bar{flex:1;height:9px;background:#e2e8f0;border-radius:99px;overflow:hidden;min-width:60px}
+  .bar>i{display:block;height:100%;width:0;border-radius:99px;
+    background:linear-gradient(90deg,#60a5fa,#34d399);transition:width .35s ease}
+
+  .card{
+    background:#fff;border-radius:16px;padding:20px 22px;margin-bottom:16px;
+    border:1px solid #e8eef7;box-shadow:0 2px 10px rgba(15,23,42,.05);
+    animation:rise .4s ease both;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .qhead{display:flex;gap:10px;align-items:flex-start;margin-bottom:14px}
+  .tag{flex:none;background:#eef2ff;color:#4f46e5;font-weight:800;font-size:12.5px;
+    border-radius:8px;padding:3px 10px;margin-top:3px;letter-spacing:.5px}
+  .qtext{font-size:16px;font-weight:700;color:#0f172a}
+
+  .opt{
+    display:flex;gap:11px;align-items:flex-start;padding:11px 14px;
+    border:1.5px solid #e2e8f0;border-radius:12px;margin-bottom:9px;
+    cursor:pointer;transition:.16s;background:#fcfdff;font-size:15px;
+  }
+  .opt:last-of-type{margin-bottom:0}
+  .opt:hover{border-color:#a5b4fc;background:#f5f7ff;transform:translateX(2px)}
+  .opt .k{flex:none;width:23px;height:23px;border-radius:50%;background:#eef2f7;color:#64748b;
+    font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:2px}
+  .opt.correct{border-color:#34d399;background:#ecfdf5}
+  .opt.correct .k{background:#34d399;color:#fff}
+  .opt.wrong{border-color:#fb7185;background:#fff1f2}
+  .opt.wrong .k{background:#fb7185;color:#fff}
+  .opt.locked{cursor:default;transform:none!important}
+  .opt.dim{opacity:.5}
+
+  .exp{margin-top:12px;padding:11px 14px;border-radius:10px;background:#f8fafc;
+    border-left:3px solid #93c5fd;font-size:14px;color:#475569;display:none}
+  .exp.show{display:block}
+  .exp b{color:#2563eb}
+
+  .result{
+    background:linear-gradient(135deg,#4f46e5,#0ea5e9);color:#fff;
+    border-radius:18px;padding:28px 24px;text-align:center;margin-top:24px;
+    box-shadow:0 12px 30px rgba(79,70,229,.28);display:none;
+  }
+  .result.show{display:block;animation:rise .45s ease both}
+  .result .big{font-size:44px;font-weight:900;letter-spacing:1px;line-height:1.2}
+  .result .big small{font-size:18px;font-weight:600;opacity:.85}
+  .result p{margin-top:8px;font-size:14.5px;opacity:.92}
+  .result button{
+    margin-top:18px;border:0;border-radius:99px;padding:11px 32px;font-size:15px;
+    font-weight:800;cursor:pointer;background:#fff;color:#4338ca;font-family:inherit;
+    transition:.2s;box-shadow:0 6px 16px rgba(0,0,0,.15);
+  }
+  .result button:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(0,0,0,.22)}
+
+  @media (max-width:520px){
+    body{padding:16px 12px 50px}
+    h1{font-size:21px}
+    .card{padding:16px 15px}
+    .qtext{font-size:15px}
+    .opt{font-size:14.3px;padding:10px 12px}
+    .sticky{padding:10px 12px;gap:10px}
+    .sticky .info{font-size:12px}
+    .sticky .info b{font-size:14px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>文學常識測驗</h1>
+    <div class="sub">老子 · 狄更斯 · 托爾斯泰 · 自傳體小說 · 心靈辯證法 · 批判現實主義　共 40 題</div>
+  </header>
+
+  <div class="sticky">
+    <div class="info">已答 <b id="done">0</b>/40</div>
+    <div class="bar"><i id="barFill"></i></div>
+    <div class="info">得分 <b id="score">0</b></div>
+  </div>
+
+  <main id="quiz"></main>
+
+  <div class="result" id="result">
+    <div class="big"><span id="finalScore">0</span><small> / 200 分</small></div>
+    <p id="finalMsg"></p>
+    <p id="finalRate"></p>
+    <button id="resetBtn">重新開始</button>
+  </div>
+
+</div>
+
+<script>
+const DATA = [
+  /* ===== 老子 ===== */
+  {
+    q: "以下說法正確的一項是",
+    opts: ["老子是戰國時期著名哲學家", "老子相傳姓李名耳，字聃", "老子是儒家學派的始祖", "《道德經》又名《莊子》"],
+    a: 1,
+    exp: "A 錯，老子是春秋時期；C 錯，老子是道家始祖；D 錯，《道德經》又稱《老子》。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["老子曾擔任周藏室之史，負責管理圖書檔案", "相傳孔子曾經向老子問禮", "老子思想核心是唯心主義神學觀", "老子後來退隱蒙山著書立說"],
+    a: 2,
+    exp: "老子思想核心是樸素的辯證法，不是唯心主義神學觀。"
+  },
+  {
+    q: "以下說法正確的一項是",
+    opts: ["在唐朝，老子被追認為李姓始祖", "老子被尊為佛教始祖，號太上老君", "老子主張用嚴刑峻法治理國家", "老子的學說後來由孟子繼承發展"],
+    a: 0,
+    exp: "B 錯，老子是道教始祖；C 錯，老子主張無為而治；D 錯，老子學說由莊周發展。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["老子在政治上主張無為而治、不言之教", "老子講究物極必反的道理", "老子是道家性命雙修的始祖", "老子主張人要積極與人相爭"],
+    a: 3,
+    exp: "老子修身主張虛心實腹、不與人爭。"
+  },
+  {
+    q: "以下說法正確的一項是",
+    opts: ["《老子》不叫《五千言》", "《老子》被譽為「萬經之王」", "《道德經》分上篇《道經》、下篇《德經》", "《道德經》主題思想是仁政"],
+    a: 1,
+    exp: "A 錯，《老子》別名包含《五千言》；C 錯，上篇《德經》、下篇《道經》；D 錯，主題是道法自然。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["《道德經》以哲學意義的「道德」為綱宗", "《道德經》論述修身、治國、用兵、養生之道", "《道德經》所說的「內聖外王」，大多以個人修身為最終目的", "《老子》是道家哲學思想的重要來源"],
+    a: 2,
+    exp: "《道德經》的內聖外王之學，多以政治為旨歸，不是以個人修身為最終目的。"
+  },
+  {
+    q: "以下說法正確的一項是",
+    opts: ["《道德經》句式雜亂，完全沒有押韻", "《道德經》屬於詩歌體之經文，朗朗上口", "《道德經》語言質樸，完全不使用修辭", "《道德經》文意淺顯，內容比較狹窄"],
+    a: 1,
+    exp: "A 錯，大致押韻；C 錯，運用多種修辭；D 錯，文意深奧，包羅廣博。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["老子籍貫相傳為楚國苦縣，即今河南鹿邑東", "老子西出陝關之後，去向沒有明確記載", "老子是世界百位歷史名人之一", "老子的學說被孔子繼承、發揚光大"],
+    a: 3,
+    exp: "D 錯，老子學說主要由莊周（莊子）繼承發展；孔子曾向老子問禮，但並非繼承其學說。"
+  },
+  {
+    q: "以下說法正確的一項是",
+    opts: ["老子在權術方面，反對物極必反的觀點", "老子修身講究虛心實腹、不與人爭", "老子主張積極對抗、以暴力止惡", "老子生活在戰國末期"],
+    a: 1,
+    exp: "A 錯，老子講究物極必反；C 錯，選項內容和老子主張不符；D 錯，老子是春秋時期。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["《老子五千文》是《道德經》的別名", "《道德經》的主題思想為「道法自然」", "《道德經》文字難以背誦，沒有音韻美感", "《道德經》語言富有說理性與感染力"],
+    a: 2,
+    exp: "《道德經》大致押韻，有中國文字的音韻之美，易誦易記。"
+  },
+
+  /* ===== 狄更斯 ===== */
+  {
+    q: "以下說法正確的一項是",
+    opts: ["查爾斯・狄更斯是 19 世紀法國批判現實主義作家", "狄更斯出生於海軍小職員家庭", "狄更斯從小接受過完整、長久的學校教育", "狄更斯生活在英國工業革命之前"],
+    a: 1,
+    exp: "A 錯，狄更斯是英國作家；C 錯，他只上過幾年學，靠自學成才；D 錯，他生活在英國工業革命後期。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["狄更斯 12 歲時全家被關入債務人監獄", "狄更斯曾在黑鞋油作坊做童工", "狄更斯當童工時和家人一同住進監獄", "狄更斯 15 歲在律師事務所當學徒，後擔任記者"],
+    a: 2,
+    exp: "狄更斯因為已經去黑鞋油作坊當童工，因此未住進監獄。"
+  },
+  {
+    q: "以下說法正確的一項是",
+    opts: ["當時英國社會發展均勻，沒有貧富差距", "狄更斯十分同情底層不幸的人，尤其關注少年兒童", "狄更斯創作完全不涉及少年兒童群體", "狄更斯反感描寫貧苦人民的生活"],
+    a: 1,
+    exp: "A 錯，當時社會兩極分化嚴重；C、D 錯，狄更斯在創作中着力描寫不幸的少年兒童。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["狄更斯作品藝術特色包含妙趣橫生的幽默", "狄更斯善於細緻入微的心理分析", "狄更斯的作品只有現實主義，沒有浪漫主義色彩", "馬克思稱狄更斯是現代英國一批傑出的小說家之一"],
+    a: 2,
+    exp: "狄更斯的特色是現實主義描寫與浪漫主義氣氛有機結合。"
+  },
+  {
+    q: "以下說法正確的一項是",
+    opts: ["《艱難時世》主要描寫法國大革命", "《雙城記》創作於 1854 年", "《奧立弗・特威斯特》又名《霧都孤兒》", "《遠大前程》不是狄更斯的作品"],
+    a: 2,
+    exp: "A 錯，《艱難時世》寫勞資矛盾；B 錯，《雙城記》是 1859 年；D 錯，《遠大前程》是狄更斯作品。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["狄更斯一生只寫了四、五部長篇小說", "《雙城記》內容和 1789 年法國大革命相關", "《董貝父子》《大衛・科波菲爾》是狄更斯的作品", "《艱難時世》是狄更斯最著名的長篇之一"],
+    a: 0,
+    exp: "狄更斯一生一共創作了十四部長篇小說和大量其他作品。"
+  },
+  {
+    q: "以下說法正確的一項是",
+    opts: ["自傳體小說屬於詩歌的一種", "自傳體小說以主人公自述生平經歷和事跡的角度寫成", "自傳體小說不能經過虛構、想象加工", "自傳體小說和普通自傳、回憶錄完全一樣"],
+    a: 1,
+    exp: "A 錯，它是傳記體小說；C 錯，可以在真人真事基礎上虛構加工；D 錯，二者並不相同。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["自傳體小說要以作者或自述主人公為原型", "高爾基的《童年》屬於自傳體小說", "高爾基的《在人間》《我的大學》不屬於自傳體小說", "盧梭《懺悔錄》是自傳體小說例子"],
+    a: 2,
+    exp: "《童年》《在人間》《我的大學》都屬於自傳體小說。"
+  },
+  {
+    q: "以下說法正確的一項是",
+    opts: ["狄更斯（1812—1870），是 18 世紀英國作家", "狄更斯早年飽經貧苦，靠刻苦自學成為作家", "狄更斯作品風格沉重壓抑，完全沒有幽默", "狄更斯《老古玩店》不屬於他的作品"],
+    a: 1,
+    exp: "A 錯，是 19 世紀；C 錯，他的作品有妙趣橫生的幽默；D 錯，《老古玩店》是狄更斯作品。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["自傳體小說創作基礎是作者親身經歷的真人真事", "自傳體小說屬於傳記體小說", "自傳體小說不允許運用小說藝術手法", "自傳體小說不同於一般的自傳和回憶錄"],
+    a: 2,
+    exp: "自傳體小說會運用小說的藝術手法，經過虛構、想象加工。"
+  },
+
+  /* ===== 托爾斯泰 ===== */
+  {
+    q: "以下說法正確的一項是",
+    opts: ["列夫・托爾斯泰是 19 世紀法國作家", "列夫・托爾斯泰身兼作家、政治思想家、哲學家", "托爾斯泰出身貧苦農民家庭", "托爾斯泰從未進入大學讀書"],
+    a: 1,
+    exp: "A 錯，他是俄國作家；C 錯，出身貴族家庭；D 錯，他曾入喀山大學，後退學。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["托爾斯泰曾嘗試在自己領地改革農奴制", "托爾斯泰曾在高加索軍隊服役，並且開始寫作", "托爾斯泰沒有參加過任何戰爭", "托爾斯泰參加過克里米亞戰爭"],
+    a: 2,
+    exp: "原文記載托爾斯泰曾參加克里米亞戰爭。"
+  },
+  {
+    q: "以下說法正確的一項是",
+    opts: ["1857 年托爾斯泰出國，看到資本主義社會的重重矛盾", "1857 年出國後，他找到消滅社會罪惡的明確辦法", "他主張用暴力革命改造社會", "他呼籲大家放棄宗教信仰"],
+    a: 0,
+    exp: "B 錯，他找不到消滅社會罪惡的途徑；C、D 錯，他呼籲人按「永恆的宗教真理」生活。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["1860—1861 年托爾斯泰再度出國考察歐洲教育", "再度出國期間，他結識赫爾岑、聽狄更斯演講", "再度出國時，他和蒲魯東會面", "再度出國之前，他就寫完《戰爭與和平》"],
+    a: 3,
+    exp: "是這次出國之後，才創作《戰爭與和平》。"
+  },
+  {
+    q: "以下說法正確的一項是",
+    opts: ["《安娜・卡列尼娜》是托爾斯泰的里程碑式巨著", "《戰爭與和平》是短篇歷史小說", "《安娜・卡列尼娜》寫於 1850 年", "《復活》早於《安娜・卡列尼娜》創作完成"],
+    a: 0,
+    exp: "B 錯，《戰爭與和平》是長篇；C、D 錯，順序：《戰爭與和平》→《安娜・卡列尼娜》→《復活》。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["70 年代末，托爾斯泰世界觀發生巨大變化", "世界觀巨變之後，他寫出《懺悔錄》", "《復活》寫作時間是 1889—1899 年", "《復活》是托爾斯泰早期隨筆作品"],
+    a: 3,
+    exp: "《復活》是他長期思想、藝術探索的總結，是後期長篇小說。"
+  },
+  {
+    q: "以下說法正確的一項是",
+    opts: ["托爾斯泰晚年嚮往奢華貴族生活", "1910 年 10 月托爾斯泰從家中出走", "托爾斯泰病逝於自己莊園裡", "托爾斯泰享年 72 歲"],
+    a: 1,
+    exp: "A 錯，晚年力求過簡樸平民生活；C 錯，病逝於小車站；D 錯，享年 82 歲。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["列寧稱托爾斯泰是「俄國革命的鏡子」", "列寧評價托爾斯泰是具有「最清醒的現實主義」的天才藝術家", "高爾基認為認識托爾斯泰，有助認識俄羅斯", "高爾基說托爾斯泰的作品脫離俄羅斯社會現實"],
+    a: 3,
+    exp: "高爾基原話：「不認識托爾斯泰者，不可能認識俄羅斯」。"
+  },
+  {
+    q: "以下說法正確的一項是",
+    opts: ["心靈辯證法重點只描寫人物心理變化的最後結果", "心靈辯證法會把人物放在矛盾處境之中刻畫", "心靈辯證法不能使用內心獨白", "心靈辯證法不可以用全知視角分析人物"],
+    a: 1,
+    exp: "A 錯，重視心理變化過程本身；C、D 錯，手法包含內心獨白、對話、全知視角直接分析。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["心靈辯證法要展現人物心靈的辯證發展過程", "運用心靈辯證法刻畫，人物情感變化要符合性格邏輯", "車爾尼雪夫斯基評論過托爾斯泰對心理的描寫", "心靈辯證法在刻畫瑪斯洛娃時首次運用"],
+    a: 3,
+    exp: "材料明確是刻畫聶赫留朵夫時成功運用心靈辯證法。"
+  },
+  {
+    q: "以下說法正確的一項是",
+    opts: ["批判現實主義是 19 世紀歐洲的一種文藝思潮與創作方法", "批判現實主義完全脫離之前的現實主義文學傳統", "批判現實主義的特色是回避社會矛盾", "批判現實主義只在俄國興起流行"],
+    a: 0,
+    exp: "B 錯，繼承以往現實主義傳統；C 錯，深刻揭示現實矛盾；D 錯，在歐洲形成。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["蒲魯東最早提出「現實主義是批判的」這個論斷", "高爾基正式提出「批判現實主義」並下定義", "批判現實主義能夠廣闊、真實展示社會生活", "批判現實主義回避對社會矛盾的揭露"],
+    a: 3,
+    exp: "批判現實主義對現實矛盾的揭示十分深刻。"
+  },
+  {
+    q: "以下說法正確的一項是",
+    opts: ["司湯達、巴爾扎克屬於批判現實主義代表作家", "屈原、李白是批判現實主義代表作家", "批判現實主義代表作家不包含狄更斯", "托爾斯泰不屬於批判現實主義作家"],
+    a: 0,
+    exp: "B 錯，屈原、李白是我國古代詩人；C、D 錯，狄更斯、托爾斯泰都屬於代表作家。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["「托爾斯泰主義」是托爾斯泰重要思想的結晶", "托爾斯泰主義一方面包含對現實的無情批判", "托爾斯泰主義只主張批判，沒有其他思想內涵", "托爾斯泰主義包含宗教「博愛」思想"],
+    a: 2,
+    exp: "它除批判現實外，還有悔罪、勿以暴力抗惡、道德自我完善等一系列主張。"
+  },
+  {
+    q: "以下說法正確的一項是",
+    opts: ["托爾斯泰主義主張「勿以暴力抗惡」", "托爾斯泰主義主張依靠暴力反抗罪惡", "托爾斯泰主義反對悔罪、拯救靈魂", "托爾斯泰主義否定禁欲觀念"],
+    a: 0,
+    exp: "B、C、D 都和原文內容相反。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["托爾斯泰主義提倡「道德自我完善」", "托爾斯泰主義有屬於他自己的宗教博愛思想", "托爾斯泰主義的思想全部是積極進步、沒有局限", "托爾斯泰主義是托爾斯泰思想的綜合體"],
+    a: 2,
+    exp: "材料客觀介紹其內容，其中勿以暴力抗惡等主張有明顯的思想局限性。"
+  },
+  {
+    q: "以下說法正確的一項是",
+    opts: ["《戰爭與和平》屬於長篇歷史小說", "《戰爭與和平》創作在托爾斯泰第一次出國前", "《安娜・卡列尼娜》是托爾斯泰最後一部作品", "《復活》寫作只用了三年時間"],
+    a: 0,
+    exp: "B 錯，寫在 1860—1861 再度出國之後；C 錯，最後一部里程碑是《復活》；D 錯，1889 至 1899，一共十年。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["托爾斯泰 1828 年出生，1910 年去世", "托爾斯泰退學之後回到自己的貴族領地", "托爾斯泰服役期間完全沒有進行文學創作", "克里米亞戰爭是托爾斯泰親身參加的戰爭"],
+    a: 2,
+    exp: "原文記載，他在高加索軍隊服役並開始寫作。"
+  },
+  {
+    q: "以下說法正確的一項是",
+    opts: ["車爾尼雪夫斯基說托爾斯泰善於描寫多變、細微的內心現象", "心靈辯證法要求人物內心變化不需要合乎性格邏輯", "聶赫留朵夫是《安娜・卡列尼娜》的主人公", "心靈辯證法屬於一種修辭手法"],
+    a: 0,
+    exp: "B 錯，感情變化要順應自身性格邏輯；C 錯，聶赫留朵夫出自《復活》；D 錯，是塑造人物的藝術手法。"
+  },
+  {
+    q: "以下說法有誤的一項是",
+    opts: ["批判現實主義文學吸收了之前現實主義文學的經驗", "托爾斯泰晚年放棄貴族舒適生活，追求平民式簡樸生活", "高爾基和列寧都對托爾斯泰給出了很高評價", "托爾斯泰主義反對悔罪、拯救靈魂"],
+    a: 3,
+    exp: "托爾斯泰主義宣揚悔罪、拯救靈魂。"
+  }
+];
+
+const LETTERS = ["A", "B", "C", "D"];
+const quizEl   = document.getElementById("quiz");
+const doneEl   = document.getElementById("done");
+const scoreEl  = document.getElementById("score");
+const barEl    = document.getElementById("barFill");
+const resultEl = document.getElementById("result");
+const TOTAL    = DATA.length;
+const PER      = 5;
+
+let answered = 0;
+let score = 0;
+
+function build() {
+  quizEl.innerHTML = "";
+  answered = 0;
+  score = 0;
+  resultEl.classList.remove("show");
+  updateHud();
+
+  DATA.forEach((item, qi) => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const head = document.createElement("div");
+    head.className = "qhead";
+    head.innerHTML = '<span class="tag">第 ' + (qi + 1) + ' 題</span>' +
+                     '<div class="qtext"></div>';
+    head.querySelector(".qtext").textContent = item.q;
+    card.appendChild(head);
+
+    const list = document.createElement("div");
+    item.opts.forEach((text, oi) => {
+      const opt = document.createElement("div");
+      opt.className = "opt";
+      const k = document.createElement("span");
+      k.className = "k";
+      k.textContent = LETTERS[oi];
+      const t = document.createElement("span");
+      t.textContent = text;
+      opt.appendChild(k);
+      opt.appendChild(t);
+      opt.addEventListener("click", () => pick(card, qi, oi));
+      list.appendChild(opt);
+    });
+    card.appendChild(list);
+
+    const exp = document.createElement("div");
+    exp.className = "exp";
+    exp.innerHTML = "<b>解析：</b>" + item.exp;
+    card.appendChild(exp);
+
+    quizEl.appendChild(card);
+  });
+}
+
+function pick(card, qi, oi) {
+  if (card.dataset.done === "1") return;
+  card.dataset.done = "1";
+
+  const item = DATA[qi];
+  const opts = card.querySelectorAll(".opt");
+
+  opts.forEach((o, i) => {
+    o.classList.add("locked");
+    if (i === item.a) o.classList.add("correct");
+    else if (i === oi) o.classList.add("wrong");
+    else o.classList.add("dim");
+  });
+
+  if (oi === item.a) score++;
+  answered++;
+
+  card.querySelector(".exp").classList.add("show");
+  updateHud();
+
+  if (answered === TOTAL) showResult();
+}
+
+function updateHud() {
+  doneEl.textContent = answered;
+  scoreEl.textContent = score * PER;
+  barEl.style.width = (answered / TOTAL * 100) + "%";
+}
+
+function showResult() {
+  const total = TOTAL * PER;
+  const got = score * PER;
+  const rate = Math.round(score / TOTAL * 100);
+
+  document.getElementById("finalScore").textContent = got;
+  document.getElementById("finalRate").textContent =
+    "答對 " + score + " / " + TOTAL + " 題　正確率 " + rate + "%";
+
+  let msg = "";
+  if (rate === 100) msg = "太厲害了！全部正確，文學常識大師！";
+  else if (rate >= 90) msg = "非常優秀，只差一點點就滿分。";
+  else if (rate >= 75) msg = "表現不錯，把錯題解析再看一遍會更牢固。";
+  else if (rate >= 60) msg = "基礎尚可，建議重點複習錯題解析。";
+  else msg = "別灰心，對照每題解析重新梳理一遍再挑戰吧！";
+  document.getElementById("finalMsg").textContent = msg;
+
+  resultEl.classList.add("show");
+  resultEl.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  build();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+build();
+</script>
+</body>
+</html>
